@@ -29,6 +29,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+A"/>
                 </Property>
+                <Property name="text" type="java.lang.String" value="A&#xf1;adir Archivo"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="MenuArchivoActionPerformed"/>
@@ -638,7 +639,7 @@
     <Container class="javax.swing.JPanel" name="Panel_espectro">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new SpectrumTimeAnalyzer()"/>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="SpectrumTimeAnalyzer analyzer = (SpectrumTimeAnalyzer) Panel_espectro;&#xa;analyzer.setDisplayMode(SpectrumTimeAnalyzer.DISPLAY_MODE_SCOPE);&#xa;analyzer.setPeakColor(Color.red);&#xa;analyzer.setBackground(Color.white);&#xa;analyzer.setSpectrumAnalyserBandCount(19);&#xa;analyzer.setSpectrumAnalyserDecay(0.05f);&#xa;int fps = SpectrumTimeAnalyzer.DEFAULT_FPS;&#xa;analyzer.setFps(fps);&#xa;analyzer.setPeakDelay((int) (fps * SpectrumTimeAnalyzer.DEFAULT_SPECTRUM_ANALYSER_PEAK_DELAY_FPS_RATIO));&#xa;Panel_espectro.setPreferredSize(new java.awt.Dimension(570, 65));"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="SpectrumTimeAnalyzer analyzer = (SpectrumTimeAnalyzer) Panel_espectro;&#xa;analyzer.setDisplayMode(SpectrumTimeAnalyzer.DISPLAY_MODE_SCOPE);&#xa;analyzer.setPeakColor(Color.red);&#xa;analyzer.setBackground(Color.white);&#xa;analyzer.setSpectrumAnalyserBandCount(19);&#xa;analyzer.setSpectrumAnalyserDecay(0.05f);&#xa;int fps = SpectrumTimeAnalyzer.DEFAULT_FPS;&#xa;analyzer.setFps(fps);&#xa;analyzer.setPeakDelay((int) (fps * SpectrumTimeAnalyzer.DEFAULT_SPECTRUM_ANALYSER_PEAK_DELAY_FPS_RATIO));&#xa;Panel_espectro.setPreferredSize(new java.awt.Dimension(50, 65));"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>
 
