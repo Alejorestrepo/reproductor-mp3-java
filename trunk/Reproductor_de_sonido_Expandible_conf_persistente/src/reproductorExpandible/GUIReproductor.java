@@ -266,7 +266,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         int fps = SpectrumTimeAnalyzer.DEFAULT_FPS;
         analyzer.setFps(fps);
         analyzer.setPeakDelay((int) (fps * SpectrumTimeAnalyzer.DEFAULT_SPECTRUM_ANALYSER_PEAK_DELAY_FPS_RATIO));
-        Panel_espectro.setPreferredSize(new java.awt.Dimension(570, 65));
+        Panel_espectro.setPreferredSize(new java.awt.Dimension(50, 65));
 
         javax.swing.GroupLayout Panel_espectroLayout = new javax.swing.GroupLayout(Panel_espectro);
         Panel_espectro.setLayout(Panel_espectroLayout);
@@ -282,6 +282,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         MenuPArchivo.setText("Archivo");
 
         MenuArchivo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        MenuArchivo.setText("Añadir Archivo");
         MenuArchivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuArchivoActionPerformed(evt);
