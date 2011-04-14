@@ -14,7 +14,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.util.Properties;
 import reproductor.*;
-
+import javazoom.jlgui.player.amp.visual.ui.SpectrumTimeAnalyzer;
+import javax.sound.sampled.SourceDataLine;
 /**
  *
  * @author JONATHAN
@@ -84,6 +85,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         btnAbrir = new javax.swing.JButton();
         btnPlay = new javax.swing.JButton();
         btnStop = new javax.swing.JButton();
@@ -99,6 +101,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         btnEqualizador = new javax.swing.JButton();
         txtBit = new javax.swing.JTextField();
         BtnDetalles = new javax.swing.JButton();
+        Panel_espectro = new SpectrumTimeAnalyzer();
         jMenuBar1 = new javax.swing.JMenuBar();
         MenuPArchivo = new javax.swing.JMenu();
         MenuArchivo = new javax.swing.JMenuItem();
@@ -136,6 +139,17 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         TipoWindows = new javax.swing.JCheckBoxMenuItem();
         TipoRedondo = new javax.swing.JCheckBoxMenuItem();
         TipoJava = new javax.swing.JCheckBoxMenuItem();
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         setTitle("Reproductor MP3 Java Sistema Palomino");
         setResizable(false);
@@ -243,10 +257,31 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
             }
         });
 
+        SpectrumTimeAnalyzer analyzer = (SpectrumTimeAnalyzer) Panel_espectro;
+        analyzer.setDisplayMode(SpectrumTimeAnalyzer.DISPLAY_MODE_SCOPE);
+        analyzer.setPeakColor(Color.red);
+        analyzer.setBackground(Color.white);
+        analyzer.setSpectrumAnalyserBandCount(19);
+        analyzer.setSpectrumAnalyserDecay(0.05f);
+        int fps = SpectrumTimeAnalyzer.DEFAULT_FPS;
+        analyzer.setFps(fps);
+        analyzer.setPeakDelay((int) (fps * SpectrumTimeAnalyzer.DEFAULT_SPECTRUM_ANALYSER_PEAK_DELAY_FPS_RATIO));
+        Panel_espectro.setPreferredSize(new java.awt.Dimension(570, 65));
+
+        javax.swing.GroupLayout Panel_espectroLayout = new javax.swing.GroupLayout(Panel_espectro);
+        Panel_espectro.setLayout(Panel_espectroLayout);
+        Panel_espectroLayout.setHorizontalGroup(
+            Panel_espectroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 126, Short.MAX_VALUE)
+        );
+        Panel_espectroLayout.setVerticalGroup(
+            Panel_espectroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 57, Short.MAX_VALUE)
+        );
+
         MenuPArchivo.setText("Archivo");
 
         MenuArchivo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
-        MenuArchivo.setText("Añadir Archivo");
         MenuArchivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuArchivoActionPerformed(evt);
@@ -518,36 +553,42 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Progreso1, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnPlay, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnPausa, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(2, 2, 2)
-                        .addComponent(btnSiguiente, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                        .addComponent(SPEAKER, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Volumen, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txtInformacion, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnPlay, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnPausa, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(2, 2, 2)
+                                .addComponent(btnSiguiente, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                                .addComponent(SPEAKER, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Volumen, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtInformacion, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(Posicion, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtBit, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(Panel_espectro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(Posicion, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtBit, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(BtnDetalles, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnLista, javax.swing.GroupLayout.PREFERRED_SIZE, 35, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnLista, javax.swing.GroupLayout.PREFERRED_SIZE, 39, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEqualizador, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(8, 8, 8)))
-                .addContainerGap())
+                        .addGap(291, 291, 291))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(Progreso1, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(26, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -564,20 +605,24 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
                     .addComponent(SPEAKER, 0, 0, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(txtInformacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(Posicion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtBit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(BtnDetalles, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(4, 4, 4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(Posicion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtBit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnEqualizador, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                            .addComponent(btnLista, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(BtnDetalles, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(btnEqualizador, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                                .addComponent(btnLista, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(Panel_espectro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(Progreso1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -699,6 +744,9 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         stop();
         SPEAKER.setIcon(new ImageIcon(getClass().getResource("/reproductordesonido/iconos/speaker1.png")));
         secondsAmount = 0;
+        SpectrumTimeAnalyzer analizer = (SpectrumTimeAnalyzer) Panel_espectro;
+            analizer.stopDSP();
+            analizer.closeDSP();
 }//GEN-LAST:event_btnStopActionPerformed
 
     private void btnPausaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPausaActionPerformed
@@ -899,11 +947,17 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         });
     }
 
-    public void abierto(Object arg0, Map arg1) {
-        if (arg1.containsKey("audio.length.bytes")) {
-            bytesLength = Double.parseDouble(arg1.get("audio.length.bytes").toString());
+    public void abierto(Object arg0, Map Infoaudio) {
+        if (Infoaudio.containsKey("audio.length.bytes")) {
+            bytesLength = Double.parseDouble(Infoaudio.get("audio.length.bytes").toString());
         }
-        audioInfo = arg1;
+        audioInfo = Infoaudio;
+
+        SpectrumTimeAnalyzer analizer = (SpectrumTimeAnalyzer) Panel_espectro;
+        analizer.stopDSP();
+        analizer.closeDSP();
+        analizer.setupDSP((SourceDataLine) audioInfo.get("basicplayer.sourcedataline"));
+        analizer.startDSP((SourceDataLine) audioInfo.get("basicplayer.sourcedataline"));
     }
 
     public void progreso(int bytesread, long microseconds, byte[] pcmdata, Map properties) {
@@ -979,6 +1033,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     private javax.swing.JCheckBoxMenuItem Modo_Presentacion;
     private javax.swing.JRadioButtonMenuItem NoRepetir;
     public javax.swing.JMenu OpcionLista;
+    public javax.swing.JPanel Panel_espectro;
     public javax.swing.JRadioButtonMenuItem PermitirDuplicado;
     private javax.swing.JRadioButtonMenuItem PermitirIrre;
     private javax.swing.JTextField Posicion;
@@ -1000,6 +1055,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     private javax.swing.JButton btnSiguiente;
     private javax.swing.JButton btnStop;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
@@ -1476,6 +1532,8 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     }
 
     private void processProgress(int bytes_leidos, long micro_segundos, byte[] pcmdata, Map properties) {
+        SpectrumTimeAnalyzer analyzer = (SpectrumTimeAnalyzer) Panel_espectro;
+                analyzer.writeDSP(pcmdata);
         float progressUpdate = (float) (bytes_leidos * 1.0f / bytesLength * 1.0f);
         int progressNow = (int) (bytesLength * progressUpdate);
         ProgresarBarra(tamañoarchivo, progressNow);
