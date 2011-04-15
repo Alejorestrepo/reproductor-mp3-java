@@ -1,6 +1,6 @@
-#Wed Apr 13 21:46:32 COT 2011
-volumen=12
+#Thu Apr 14 22:30:56 COT 2011
+volumen=17
 modo_oculto=true
-modo_presentacion=false
 mute=false
+modo_presentacion=false
 ultima_direccion=C\:\\Program Files\\Total Video Converter\\Converted
