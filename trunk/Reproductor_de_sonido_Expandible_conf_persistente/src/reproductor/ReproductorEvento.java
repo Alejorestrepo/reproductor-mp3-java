@@ -7,22 +7,22 @@ package reproductor;
 public class ReproductorEvento
 {
     public static final int UNKNOWN = -1;
-    public static final int OPENING = 0;
-    public static final int OPENED = 1;
-    public static final int PLAYING = 2;
-    public static final int STOPPED = 3;
-    public static final int PAUSED = 4;
-    public static final int RESUMED = 5;
-    public static final int SEEKING = 6;
-    public static final int SEEKED = 7;
+    public static final int ABRIENDO = 0;
+    public static final int ABIERTO = 1;
+    public static final int REPRODUCIENDO = 2;
+    public static final int PARADO = 3;
+    public static final int PAUSADO = 4;
+    public static final int RESUMIDO = 5;
+    public static final int SALTANDO = 6;
+    public static final int SALTADO = 7;
     public static final int EOM = 8;
     public static final int PAN = 9;
     public static final int GAIN = 10;
-    private int code = UNKNOWN;
-    private int position = -1;
-    private double value = -1.0;
+    private int codigo = UNKNOWN;
+    private int posicion = -1;
+    private double valor = -1.0;
     private Object source = null;
-    private Object description = null;
+    private Object descripcion = null;
 
     /**
      * Constructor
@@ -34,11 +34,11 @@ public class ReproductorEvento
      */
     public ReproductorEvento(Object source, int code, int position, double value, Object desc)
     {
-        this.value = value;
-        this.position = position;
+        this.valor = value;
+        this.posicion = position;
         this.source = source;
-        this.code = code;
-        this.description = desc;
+        this.codigo = code;
+        this.descripcion = desc;
     }
 
     /**
@@ -47,7 +47,7 @@ public class ReproductorEvento
      */
     public int getCode()
     {
-        return code;
+        return codigo;
     }
 
     /**
@@ -56,7 +56,7 @@ public class ReproductorEvento
      */
     public int getPosition()
     {
-        return position;
+        return posicion;
     }
 
     /**
@@ -65,7 +65,7 @@ public class ReproductorEvento
      */
     public double getValue()
     {
-        return value;
+        return valor;
     }
 
     /**
@@ -74,7 +74,7 @@ public class ReproductorEvento
      */
     public Object getDescription()
     {
-        return description;
+        return descripcion;
     }
 
     public Object getSource()
@@ -84,17 +84,17 @@ public class ReproductorEvento
 
     public String toString()
     {
-        if (code == OPENED) return "OPENED:" + position;
-        else if (code == OPENING) return "OPENING:" + position + ":" + description;
-        else if (code == PLAYING) return "PLAYING:" + position;
-        else if (code == STOPPED) return "STOPPED:" + position;
-        else if (code == PAUSED) return "PAUSED:" + position;
-        else if (code == RESUMED) return "RESUMED:" + position;
-        else if (code == SEEKING) return "SEEKING:" + position;
-        else if (code == SEEKED) return "SEEKED:" + position;
-        else if (code == EOM) return "EOM:" + position;
-        else if (code == PAN) return "PAN:" + value;
-        else if (code == GAIN) return "GAIN:" + value;
-        else return "UNKNOWN:" + position;
+        if (codigo == ABIERTO) return "ABIERTO:" + posicion;
+        else if (codigo == ABRIENDO) return "ABRIENDO:" + posicion + ":" + descripcion;
+        else if (codigo == REPRODUCIENDO) return "REPRODUCIENDO:" + posicion;
+        else if (codigo == PARADO) return "PARADO:" + posicion;
+        else if (codigo == PAUSADO) return "PAUSADO:" + posicion;
+        else if (codigo == RESUMIDO) return "RESUMIDO:" + posicion;
+        else if (codigo == SALTANDO) return "SALTANDO:" + posicion;
+        else if (codigo == SALTADO) return "SALTADO:" + posicion;
+        else if (codigo == EOM) return "EOM:" + posicion;
+        else if (codigo == PAN) return "PAN:" + valor;
+        else if (codigo == GAIN) return "GAIN:" + valor;
+        else return "DESCONOCIDO:" + posicion;
     }
 }

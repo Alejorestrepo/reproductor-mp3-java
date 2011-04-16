@@ -133,7 +133,7 @@ public class Tabla extends javax.swing.JFrame {
         //String uno=getMiTabla().getColumnName(Contador_de_celda);//Entrega nombre d columna
         //System.out.println("aparecio "+uno);
         if (evt.getClickCount() == 2) {
-            System.out.println(evt.getClickCount() + " archivo " + rutaTabla + " ruta " + Contador_de_celda);
+            //System.out.println(evt.getClickCount() + " archivo " + rutaTabla + " ruta " + Contador_de_celda);
             abc.Pista = Contador_de_celda;
             Reproduce(rutaTabla);
         }
@@ -213,7 +213,6 @@ public class Tabla extends javax.swing.JFrame {
     public static void inicializaTabla() {
         // obtiene numero de filas de la tabla
         int filas = getMiTabla().getRowCount();
-
         // remueve todas las filas de la tabla
         for (int fila = 0; fila < filas; fila++) {
             getMiModelo().removeRow(0);

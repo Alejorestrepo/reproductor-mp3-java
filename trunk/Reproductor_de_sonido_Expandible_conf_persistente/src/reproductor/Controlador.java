@@ -20,14 +20,14 @@ public interface Controlador
     /**
      * Open file to play.
      * @param file
-     * @throws BasicPlayerException
+     * @throws PlayerException
      */
     public void abrir(File file) throws ReproductorExcepcion;
 
     /**
      * Open URL to play.
      * @param url
-     * @throws BasicPlayerException
+     * @throws PlayerException
      */
     public void abrir(URL url) throws ReproductorExcepcion;
 
@@ -35,31 +35,31 @@ public interface Controlador
      * Skip bytes.
      * @param bytes
      * @return bytes skipped according to audio frames constraint.
-     * @throws BasicPlayerException
+     * @throws PlayerException
      */
     public long buscar_saltar(long bytes) throws ReproductorExcepcion;
 
     /**
      * Start playback.
-     * @throws BasicPlayerException
+     * @throws PlayerException
      */
     public void reproducir() throws ReproductorExcepcion;
 
     /**
      * Stop playback. 
-     * @throws BasicPlayerException
+     * @throws PlayerException
      */
     public void parar() throws ReproductorExcepcion;
 
     /**
      * Pause playback. 
-     * @throws BasicPlayerException
+     * @throws PlayerException
      */
     public void pausar() throws ReproductorExcepcion;
 
     /**
      * Resume playback. 
-     * @throws BasicPlayerException
+     * @throws PlayerException
      */
     public void resumir() throws ReproductorExcepcion;
 
