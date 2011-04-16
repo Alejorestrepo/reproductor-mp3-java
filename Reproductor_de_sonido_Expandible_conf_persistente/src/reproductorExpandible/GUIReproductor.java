@@ -16,6 +16,7 @@ import java.util.Properties;
 import reproductor.*;
 import javazoom.jlgui.player.amp.visual.ui.SpectrumTimeAnalyzer;
 import javax.sound.sampled.SourceDataLine;
+
 /**
  *
  * @author JONATHAN
@@ -68,7 +69,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
             propiedades_conf.load(new FileInputStream(canonicalPath));
         } catch (IOException ex) {
             Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("No existe fichero se creara uno");
+            //System.out.println("No existe fichero se creara uno");
         }
         CARGAR_CONFIGURACIONES();
         setLocation(400, 200);
@@ -662,7 +663,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 }//GEN-LAST:event_BuscarActionPerformed
 
     private void EliminarElegidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarElegidoActionPerformed
-        System.out.println(tabla.rutaTabla);
+        //System.out.println(tabla.rutaTabla);
         NodoDoble auxiliar = ldco.busca((File) tabla.rutaTabla);
         if (auxiliar != null) {
             ldco.elimina(auxiliar);
@@ -736,8 +737,8 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         SPEAKER.setIcon(new ImageIcon(getClass().getResource("/reproductordesonido/iconos/speaker1.png")));
         secondsAmount = 0;
         SpectrumTimeAnalyzer analizer = (SpectrumTimeAnalyzer) Panel_espectro;
-            analizer.stopDSP();
-            analizer.closeDSP();
+        analizer.stopDSP();
+        analizer.closeDSP();
 }//GEN-LAST:event_btnStopActionPerformed
 
     private void btnPausaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPausaActionPerformed
@@ -938,12 +939,11 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         });
     }
 
-    public void abierto(Object arg0, Map Infoaudio) {
+    public void abierto(Map Infoaudio) {
         if (Infoaudio.containsKey("audio.length.bytes")) {
             bytesLength = Double.parseDouble(Infoaudio.get("audio.length.bytes").toString());
         }
         audioInfo = Infoaudio;
-
         SpectrumTimeAnalyzer analizer = (SpectrumTimeAnalyzer) Panel_espectro;
         analizer.stopDSP();
         analizer.closeDSP();
@@ -952,7 +952,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     }
 
     public void progreso(int bytesread, long microseconds, byte[] pcmdata, Map properties) {
-        processProgress(bytesread, microseconds, pcmdata, properties);
+        Procesar_Progreso(bytesread, microseconds, pcmdata, properties);
 
     }
 
@@ -1378,17 +1378,15 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     }
 
     private void Contactar() {
-        String email = JOptionPane.showInputDialog("Ingrese su emal");
-        if (email.contains("@")) {
-            String mail = "mailto:" + email;
-            try {
-                elemento.mail(new URI(mail));
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Error inesperado", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Error de usuario  Ingrese el @", "Error", JOptionPane.ERROR_MESSAGE);
+
+        String email = email = "jhonelfenix@gmail.com";
+        String mail = "mailto:" + email;
+        try {
+            elemento.mail(new URI(mail));
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error inesperado", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
 
     }
 
@@ -1490,7 +1488,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         if (valor == 1 && control == 0) /// 1 es posterior
         {
             if ((Pista + 1) == tabla.getMiTabla().getRowCount()) {
-                System.out.println("al inicio");
+                //System.out.println("al inicio");
                 //manda el contador al inicio paran emular un regreso
                 Pista = 0;
                 Reproducir(Pista);
@@ -1521,7 +1519,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         }
     }
 
-    private void processProgress(int bytes_leidos, long micro_segundos, byte[] pcmdata, Map properties) {
+    private void Procesar_Progreso(int bytes_leidos, long micro_segundos, byte[] pcmdata, Map propiedades) {
         SpectrumTimeAnalyzer analyzer = (SpectrumTimeAnalyzer) Panel_espectro;
         analyzer.writeDSP(pcmdata);
         float progressUpdate = (float) (bytes_leidos * 1.0f / bytesLength * 1.0f);
@@ -1536,10 +1534,6 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         if (total <= 0) {
             total = -1;
         }
-        if (audioInfo.containsKey("basicplayer.sourcedataline")) {
-            // Spectrum/time analyzer para el analizador de espectro
-            //if (ui.getAcAnalyzer() != null) ui.getAcAnalyzer().writeDSP(pcmdata);
-        }
         if (audioInfo.containsKey("audio.length.bytes")) {
             byteslength = ((Integer) audioInfo.get("audio.length.bytes")).intValue();
         }
@@ -1550,9 +1544,9 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         if (audioInfo.containsKey("audio.type")) {
             String audioformat = (String) audioInfo.get("audio.type");
             if (audioformat.equalsIgnoreCase("mp3")) {
-                // EqualizerUI
-                if (properties.containsKey("mp3.equalizer")) {
-                    equalizar.setBands((float[]) properties.get("mp3.equalizer"));
+                // Equalizer
+                if (propiedades.containsKey("mp3.equalizer")) {
+                    equalizar.setBands((float[]) propiedades.get("mp3.equalizer"));
                 }
                 if (total > 0) {
                     secondsAmount = (long) (total * progress);
@@ -1635,7 +1629,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     }
 
     public void GUARDAR_VOLUMEN(int value) throws FileNotFoundException {
-        System.out.println(String.valueOf(value));
+        //System.out.println(String.valueOf(value));
         GUARDAR_LLAVE("volumen", String.valueOf(value));
     }
 
@@ -1658,7 +1652,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
     private void MODO_OCULTO() {
         boolean modo_oculto = (Boolean.valueOf(propiedades_conf.getProperty("modo_oculto")));
-        System.out.println(modo_oculto);
+        //System.out.println(modo_oculto);
         if (modo_oculto) {
             MinimizarAlReloj();
         }
@@ -1666,6 +1660,6 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
     public void GUARDAR_MODO_Oculto(boolean selected) throws FileNotFoundException {
         GUARDAR_LLAVE("modo_oculto", String.valueOf(selected));
-        System.out.println(selected);
+        //System.out.println(selected);
     }
 }

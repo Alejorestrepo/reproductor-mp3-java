@@ -15,7 +15,7 @@ public interface ReproductorLanzador
      * @param stream could be File, URL or InputStream
      * @param properties audio stream properties.
      */
-    public void abierto(Object stream, Map properties);
+    public void abierto(Map properties);
 
     /**
      * Progress callback while playing.

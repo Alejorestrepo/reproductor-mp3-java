@@ -55,13 +55,13 @@ public class Reproductor implements Controlador, Runnable
      * These variables are used to distinguish stopped, paused, playing states.
      * We need them to control Thread.
      */
-    public static final int UNKNOWN = -1;
-    public static final int PLAYING = 0;
-    public static final int PAUSED = 1;
-    public static final int STOPPED = 2;
-    public static final int OPENED = 3;
-    public static final int SEEKING = 4;
-    private int m_status = UNKNOWN;
+    public static final int DESCONOCIDO = -1;
+    public static final int REPRODUCIENDO = 0;
+    public static final int PAUSADO = 1;
+    public static final int PARADO = 2;
+    public static final int ABIERTO = 3;
+    public static final int SALTANDO = 4;
+    private int m_status = DESCONOCIDO;
     // Listeners to be notified.
     private Collection m_listeners = null;
     private Map empty_map = new HashMap();
@@ -78,7 +78,7 @@ public class Reproductor implements Controlador, Runnable
 
     protected void reset()
     {
-        m_status = UNKNOWN;
+        m_status = DESCONOCIDO;
         if (m_audioInputStream != null)
         {
             synchronized (m_audioInputStream)
@@ -235,7 +235,7 @@ public class Reproductor implements Controlador, Runnable
         try
         {
             reset();
-            notifyEvent(ReproductorEvento.OPENING, getEncodedStreamPosition(), -1, mi_fuente_de_Datos);
+            notifyEvent(ReproductorEvento.ABRIENDO, getEncodedStreamPosition(), -1, mi_fuente_de_Datos);
             if (mi_fuente_de_Datos instanceof URL)
             {
                 initAudioInputStream((URL) mi_fuente_de_Datos);
@@ -282,10 +282,10 @@ public class Reproductor implements Controlador, Runnable
             while (it.hasNext())
             {
                 ReproductorLanzador bpl = (ReproductorLanzador) it.next();
-                bpl.abierto(mi_fuente_de_Datos, properties);
+                bpl.abierto(properties);
             }
-            m_status = OPENED;
-            notifyEvent(ReproductorEvento.OPENED, getEncodedStreamPosition(), -1, null);
+            m_status = ABIERTO;
+            notifyEvent(ReproductorEvento.ABIERTO, getEncodedStreamPosition(), -1, null);
         }
         catch (LineUnavailableException e)
         {
@@ -455,15 +455,15 @@ public class Reproductor implements Controlador, Runnable
      */
     protected void stopPlayback()
     {
-        if ((m_status == PLAYING) || (m_status == PAUSED))
+        if ((m_status == REPRODUCIENDO) || (m_status == PAUSADO))
         {
             if (m_line != null)
             {
                 m_line.flush();
                 m_line.stop();
             }
-            m_status = STOPPED;
-            notifyEvent(ReproductorEvento.STOPPED, getEncodedStreamPosition(), -1, null);
+            m_status = PARADO;
+            notifyEvent(ReproductorEvento.PARADO, getEncodedStreamPosition(), -1, null);
             synchronized (m_audioInputStream)
             {
                 closeStream();
@@ -481,13 +481,13 @@ public class Reproductor implements Controlador, Runnable
     {
         if (m_line != null)
         {
-            if (m_status == PLAYING)
+            if (m_status == REPRODUCIENDO)
             {
                 m_line.flush();
                 m_line.stop();
-                m_status = PAUSED;
+                m_status = PAUSADO;
                 log.info("pausePlayback() completed");
-                notifyEvent(ReproductorEvento.PAUSED, getEncodedStreamPosition(), -1, null);
+                notifyEvent(ReproductorEvento.PAUSADO, getEncodedStreamPosition(), -1, null);
             }
         }
     }
@@ -501,12 +501,12 @@ public class Reproductor implements Controlador, Runnable
     {
         if (m_line != null)
         {
-            if (m_status == PAUSED)
+            if (m_status == PAUSADO)
             {
                 m_line.start();
-                m_status = PLAYING;
+                m_status = REPRODUCIENDO;
                 log.info("resumePlayback() completed");
-                notifyEvent(ReproductorEvento.RESUMED, getEncodedStreamPosition(), -1, null);
+                notifyEvent(ReproductorEvento.RESUMIDO, getEncodedStreamPosition(), -1, null);
             }
         }
     }
@@ -516,15 +516,15 @@ public class Reproductor implements Controlador, Runnable
      */
     protected void startPlayback() throws ReproductorExcepcion
     {
-        if (m_status == STOPPED) initAudioInputStream();
-        if (m_status == OPENED)
+        if (m_status == PARADO) initAudioInputStream();
+        if (m_status == ABIERTO)
         {
             log.info("startPlayback called");
             if (!(mi_hilo == null || !mi_hilo.isAlive()))
             {
                 log.info("WARNING: old thread still running!!");
                 int cnt = 0;
-                while (m_status != OPENED)
+                while (m_status != ABIERTO)
                 {
                     try
                     {
@@ -560,8 +560,8 @@ public class Reproductor implements Controlador, Runnable
             if (m_line != null)
             {
                 m_line.start();
-                m_status = PLAYING;
-                notifyEvent(ReproductorEvento.PLAYING, getEncodedStreamPosition(), -1, null);
+                m_status = REPRODUCIENDO;
+                notifyEvent(ReproductorEvento.REPRODUCIENDO, getEncodedStreamPosition(), -1, null);
             }
         }
     }
@@ -582,9 +582,9 @@ public class Reproductor implements Controlador, Runnable
         synchronized (m_audioInputStream)
         {
             // Main play/pause loop.
-            while ((nBytesRead != -1) && (m_status != STOPPED) && (m_status != SEEKING) && (m_status != UNKNOWN))
+            while ((nBytesRead != -1) && (m_status != PARADO) && (m_status != SALTANDO) && (m_status != DESCONOCIDO))
             {
-                if (m_status == PLAYING)
+                if (m_status == REPRODUCIENDO)
                 {
                     // Play.
                     try
@@ -616,8 +616,8 @@ public class Reproductor implements Controlador, Runnable
                     catch (IOException e)
                     {
                         log.error("Thread cannot run()", e);
-                        m_status = STOPPED;
-                        notifyEvent(ReproductorEvento.STOPPED, getEncodedStreamPosition(), -1, null);
+                        m_status = PARADO;
+                        notifyEvent(ReproductorEvento.PARADO, getEncodedStreamPosition(), -1, null);
                     }
                     // Nice CPU usage.
                     if (threadSleep > 0)
@@ -661,9 +661,9 @@ public class Reproductor implements Controlador, Runnable
             // Close stream.
             closeStream();
         }
-        m_status = STOPPED;
-        notifyEvent(ReproductorEvento.STOPPED, getEncodedStreamPosition(), -1, null);
-        log.info("Thread completed");
+        m_status = PARADO;
+        notifyEvent(ReproductorEvento.PARADO, getEncodedStreamPosition(), -1, null);
+        log.info("Hilo completado");
     }
 
     /**
@@ -678,15 +678,15 @@ public class Reproductor implements Controlador, Runnable
         long totalSkipped = 0;
         if (mi_fuente_de_Datos instanceof File)
         {
-            log.info("Bytes to skip : " + bytes);
+            log.info("Bytes a saltar : " + bytes);
             int previousStatus = m_status;
-            m_status = SEEKING;
+            m_status = SALTANDO;
             long skipped = 0;
             try
             {
                 synchronized (m_audioInputStream)
                 {
-                    notifyEvent(ReproductorEvento.SEEKING, getEncodedStreamPosition(), -1, null);
+                    notifyEvent(ReproductorEvento.SALTANDO, getEncodedStreamPosition(), -1, null);
                     initAudioInputStream();
                     if (m_audioInputStream != null)
                     {
@@ -696,15 +696,15 @@ public class Reproductor implements Controlador, Runnable
                             skipped = m_audioInputStream.skip(bytes - totalSkipped);
                             if (skipped == 0) break;
                             totalSkipped = totalSkipped + skipped;
-                            log.info("Skipped : " + totalSkipped + "/" + bytes);
+                            log.info("Saltado : " + totalSkipped + "/" + bytes);
                             if (totalSkipped == -1) throw new ReproductorExcepcion(ReproductorExcepcion.SKIPNOTSUPPORTED);
                         }
                     }
                 }
-                notifyEvent(ReproductorEvento.SEEKED, getEncodedStreamPosition(), -1, null);
-                m_status = OPENED;
-                if (previousStatus == PLAYING) startPlayback();
-                else if (previousStatus == PAUSED)
+                notifyEvent(ReproductorEvento.SALTADO, getEncodedStreamPosition(), -1, null);
+                m_status = ABIERTO;
+                if (previousStatus == REPRODUCIENDO) startPlayback();
+                else if (previousStatus == PAUSADO)
                 {
                     startPlayback();
                     pausePlayback();
@@ -757,7 +757,7 @@ public class Reproductor implements Controlador, Runnable
             if (m_audioInputStream != null)
             {
                 m_audioInputStream.close();
-                log.info("Stream closed");
+                log.info("Stream cerrado");
             }
         }
         catch (IOException e)
