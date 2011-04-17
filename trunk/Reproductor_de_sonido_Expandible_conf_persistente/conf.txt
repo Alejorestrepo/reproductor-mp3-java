@@ -1,6 +1,7 @@
-#Fri Apr 15 21:57:54 COT 2011
-volumen=17
-modo_oculto=true
-modo_presentacion=false
+#Sat Apr 16 23:14:13 COT 2011
+volumen=8
+modo_oculto=false
 mute=false
-ultima_direccion=C\:\\Program Files\\Total Video Converter\\Converted
+modo_presentacion=false
+ultima_direccion=F\:\\DESCARGAS_INTERNET
+ultima_lista=C\:\\Users\\JONATHAN\\Desktop\\lista.m3u

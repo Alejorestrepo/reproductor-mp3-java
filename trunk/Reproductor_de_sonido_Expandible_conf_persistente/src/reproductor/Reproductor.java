@@ -370,17 +370,17 @@ public class Reproductor implements Controlador, Runnable
      */
     protected void createLine() throws LineUnavailableException
     {
-        log.info("Create Line");
+        log.info("Creando Linea");
         if (m_line == null)
         {
             AudioFormat sourceFormat = m_audioInputStream.getFormat();
-            log.info("Create Line : Source format : " + sourceFormat.toString());
+            log.info("Creando Linea : Source format : " + sourceFormat.toString());
             int nSampleSizeInBits = sourceFormat.getSampleSizeInBits();
             if (nSampleSizeInBits <= 0) nSampleSizeInBits = 16;
             if ((sourceFormat.getEncoding() == AudioFormat.Encoding.ULAW) || (sourceFormat.getEncoding() == AudioFormat.Encoding.ALAW)) nSampleSizeInBits = 16;
             if (nSampleSizeInBits != 8) nSampleSizeInBits = 16;
             AudioFormat targetFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sourceFormat.getSampleRate(), nSampleSizeInBits, sourceFormat.getChannels(), sourceFormat.getChannels() * (nSampleSizeInBits / 8), sourceFormat.getSampleRate(), false);
-            log.info("Create Line : Target format: " + targetFormat);
+            log.info("Creando Linea : Target format: " + targetFormat);
             // Keep a reference on encoded stream to progress notification.
             m_encodedaudioInputStream = m_audioInputStream;
             try
@@ -407,8 +407,8 @@ public class Reproductor implements Controlador, Runnable
                 m_line = (SourceDataLine) AudioSystem.getLine(info);
                 m_mixerName = null;
             }
-            log.info("Line : " + m_line.toString());
-            log.debug("Line Info : " + m_line.getLineInfo().toString());
+            log.info("Linea : " + m_line.toString());
+            log.debug("Informacion de linea : " + m_line.getLineInfo().toString());
             log.debug("Line AudioFormat: " + m_line.getFormat().toString());
         }
     }
@@ -425,7 +425,7 @@ public class Reproductor implements Controlador, Runnable
             if (buffersize <= 0) buffersize = m_line.getBufferSize();
             m_lineCurrentBufferSize = buffersize;
             m_line.open(audioFormat, buffersize);
-            log.info("Open Line : BufferSize=" + buffersize);
+            log.info("Linea abierta : BufferSize=" + buffersize);
             /*-- Display supported controls --*/
             Control[] c = m_line.getControls();
             for (int p = 0; p < c.length; p++)
@@ -468,7 +468,7 @@ public class Reproductor implements Controlador, Runnable
             {
                 closeStream();
             }
-            log.info("stopPlayback() completed");
+            log.info("stopPlayback() completado");
         }
     }
 
@@ -486,7 +486,7 @@ public class Reproductor implements Controlador, Runnable
                 m_line.flush();
                 m_line.stop();
                 m_status = PAUSADO;
-                log.info("pausePlayback() completed");
+                log.info("pausePlayback() completado");
                 notifyEvent(ReproductorEvento.PAUSADO, getEncodedStreamPosition(), -1, null);
             }
         }
@@ -505,7 +505,7 @@ public class Reproductor implements Controlador, Runnable
             {
                 m_line.start();
                 m_status = REPRODUCIENDO;
-                log.info("resumePlayback() completed");
+                log.info("resumePlayback() completado");
                 notifyEvent(ReproductorEvento.RESUMIDO, getEncodedStreamPosition(), -1, null);
             }
         }
@@ -519,10 +519,10 @@ public class Reproductor implements Controlador, Runnable
         if (m_status == PARADO) initAudioInputStream();
         if (m_status == ABIERTO)
         {
-            log.info("startPlayback called");
+            log.info("startPlayback llamado");
             if (!(mi_hilo == null || !mi_hilo.isAlive()))
             {
-                log.info("WARNING: old thread still running!!");
+                log.info("ADVERTENCIA: Hilo antiguo aún en marcha!!");
                 int cnt = 0;
                 while (m_status != ABIERTO)
                 {
@@ -530,7 +530,7 @@ public class Reproductor implements Controlador, Runnable
                     {
                         if (mi_hilo != null)
                         {
-                            log.info("Waiting ... " + cnt);
+                            log.info("Esperando ... " + cnt);
                             cnt++;
                             Thread.sleep(1000);
                             if (cnt > 2)
@@ -554,7 +554,7 @@ public class Reproductor implements Controlador, Runnable
             {
                 throw new ReproductorExcepcion(ReproductorExcepcion.CANNOTINITLINE, e);
             }
-            log.info("Creating new thread");
+            log.info("Creando nuevo hilo");
             mi_hilo = new Thread(this, "BasicPlayer");
             mi_hilo.start();
             if (m_line != null)
@@ -575,7 +575,7 @@ public class Reproductor implements Controlador, Runnable
      */
     public void run()
     {
-        log.info("Thread Running");
+        log.info("Hilo en curso");
         int nBytesRead = 1;
         byte[] abData = new byte[EXTERNAL_BUFFER_SIZE];
         // Lock stream while playing.
@@ -615,7 +615,7 @@ public class Reproductor implements Controlador, Runnable
                     }
                     catch (IOException e)
                     {
-                        log.error("Thread cannot run()", e);
+                        log.error("Hilo no puede run()", e);
                         m_status = PARADO;
                         notifyEvent(ReproductorEvento.PARADO, getEncodedStreamPosition(), -1, null);
                     }
@@ -628,7 +628,7 @@ public class Reproductor implements Controlador, Runnable
                         }
                         catch (InterruptedException e)
                         {
-                            log.error("Thread cannot sleep(" + threadSleep + ")", e);
+                            log.error("Hilo no puede sleep(" + threadSleep + ")", e);
                         }
                     }
                 }
@@ -641,7 +641,7 @@ public class Reproductor implements Controlador, Runnable
                     }
                     catch (InterruptedException e)
                     {
-                        log.error("Thread cannot sleep(1000)", e);
+                        log.error("Hilo no puede sleep(1000)", e);
                     }
                 }
             }
@@ -757,12 +757,12 @@ public class Reproductor implements Controlador, Runnable
             if (m_audioInputStream != null)
             {
                 m_audioInputStream.close();
-                log.info("Stream cerrado");
+                log.info("Flujo cerrado");
             }
         }
         catch (IOException e)
         {
-            log.info("Cannot close stream", e);
+            log.info("No se puede cerrar el flujo", e);
         }
     }
 
