@@ -30,13 +30,11 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     Desktop elemento;
     private UIManager.LookAndFeelInfo apariencias[];
     static ListaDobleConOrden ldco = new ListaDobleConOrden();
-    JFileChooser archivo;
     static Tabla tabla;
     Equalizador equalizar;
     private long secondsAmount = 0;
     private Map audioInfo = null;
-    File[] Elementos;
-    static File Directorio, tamañoarchivo;
+    static File tamañoarchivo;
     private static Reproductor ReproductorBasico;
     boolean estado = false, repetir = false, aleatorio = false, estado1 = false, listado = false, equalizador = false;
     static boolean duplicado = false;
@@ -46,7 +44,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     Long duration = null;
     int horas = 0, minutofinal = 0, minuto, segundos, segundofinal;
     static boolean noreproducible = false;
-    String ultima_direccion = "C:";
+    String ultima_direccion = "C:", ultima_lista = "C:";
     int valor_volumen = 50;
     String canonicalPath;
 
@@ -60,7 +58,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         setVisible(true);
         ReproductorBasico = new Reproductor();
         atributos = new MpegInfo();
-        equalizar = new Equalizador(this);
+        equalizar = new Equalizador();
         ReproductorBasico.addBasicPlayerListener(this);
         tabla = new Tabla(this);
         initComponents();
@@ -80,6 +78,29 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
                 MinimizarAlReloj();
             }
         });
+    }
+
+    public void BOTON_MUTE_N(boolean estado) {
+        if (estado) {
+            try {
+                SPEAKER.setIcon(new ImageIcon(getClass().getResource("/reproductordesonido/iconos/speaker3.png")));
+                ReproductorBasico.setGain(0);
+            } catch (ReproductorExcepcion ex) {
+            }
+            try {
+                GUARDAR_ULTIMO_MUTE(estado);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            SPEAKER.setIcon(new ImageIcon(getClass().getResource("/reproductordesonido/iconos/speaker2.png")));
+            ModificarVolumen();
+            try {
+                GUARDAR_ULTIMO_MUTE(estado);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -769,26 +790,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
     private void SPEAKERActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SPEAKERActionPerformed
         estado1 = !estado1;
-        if (estado1) {
-            try {
-                SPEAKER.setIcon(new ImageIcon(getClass().getResource("/reproductordesonido/iconos/speaker3.png")));
-                ReproductorBasico.setGain(0);
-            } catch (ReproductorExcepcion ex) {
-            }
-            try {
-                GUARDAR_ULTIMO_MUTE(estado1);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            SPEAKER.setIcon(new ImageIcon(getClass().getResource("/reproductordesonido/iconos/speaker2.png")));
-            ModificarVolumen();
-            try {
-                GUARDAR_ULTIMO_MUTE(estado1);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        BOTON_MUTE_N(estado1);
     }//GEN-LAST:event_SPEAKERActionPerformed
 
     private void VolumenMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_VolumenMouseDragged
@@ -799,6 +801,11 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         try {
             int cal = (int) (tamañoarchivo.length() * Progreso1.getValue() / 100);
             ReproductorBasico.buscar_saltar(cal);
+            if (SPEAKER.isSelected()) {
+                ReproductorBasico.setGain(0);
+            } else {
+                ModificarVolumen();
+            }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "No lo movere xq no estoy reproduciendo", "Error", JOptionPane.ERROR_MESSAGE);
             Progreso1.setValue(0);
@@ -1058,12 +1065,20 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
     public void ABRIR(String tipo) {
         ULTIMA_DIRECCION();
-        archivo = new JFileChooser(ultima_direccion);
+        JFileChooser archivo = new JFileChooser(ultima_direccion);
         archivo.setMultiSelectionEnabled(true);
         //archivo.setDragEnabled(true);
         archivo.getDragEnabled();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Audio", "mp3", "wav", "ogg", "flac");
-        archivo.setFileFilter(filter);
+        FileNameExtensionFilter filtro_total = new FileNameExtensionFilter("Audio", "mp3", "wav", "ogg", "flac");
+        FileNameExtensionFilter filtro0 = new FileNameExtensionFilter("Archivos MP3", "mp3");
+        FileNameExtensionFilter filtro1 = new FileNameExtensionFilter("Archivos WAV", "wav");
+        FileNameExtensionFilter filtro2 = new FileNameExtensionFilter("Archivos OGG", "ogg");
+        FileNameExtensionFilter filtro3 = new FileNameExtensionFilter("Archivos FLAC", "flac");
+        archivo.setFileFilter(filtro0);
+        archivo.setFileFilter(filtro1);
+        archivo.setFileFilter(filtro2);
+        archivo.setFileFilter(filtro3);
+        archivo.setFileFilter(filtro_total);
         if (tipo.equals("Archivos")) {
             archivo.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
@@ -1073,8 +1088,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
             } else {
                 try {
                     GUARDAR_ULTIMA_DIRECCION(archivo.getSelectedFile().getParent());
-                    Elementos = archivo.getSelectedFiles();
-                    tabla.LlenarTabla(Elementos);
+                    tabla.LlenarTabla(archivo.getSelectedFiles());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, "Error Cargando Archivo", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -1088,9 +1102,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
             }
             try {
                 GUARDAR_ULTIMA_DIRECCION(archivo.getSelectedFile().getPath());
-                Directorio = archivo.getSelectedFile();
-                tabla.llamar(Directorio);
-
+                tabla.llamar(archivo.getSelectedFile());
             } catch (ArrayIndexOutOfBoundsException e) {
                 //System.out.println(e);
             } catch (Exception e) {
@@ -1251,7 +1263,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     }
 
     public void CargarLista() {
-        JFileChooser FileGuardar = new JFileChooser("C:\\");
+        JFileChooser FileGuardar = new JFileChooser(ultima_lista);
         FileGuardar.setFileSelectionMode(JFileChooser.FILES_ONLY);
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos REP", "rep");
         FileNameExtensionFilter filtro1 = new FileNameExtensionFilter("Archivos M3U", "m3u");
@@ -1260,17 +1272,20 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         FileGuardar.setFileFilter(filtro1);
         FileGuardar.setFileFilter(filtro2);
         int resultado = FileGuardar.showOpenDialog(this);
-
         if (resultado == JFileChooser.CANCEL_OPTION) {
             return;
         }
         tabla.Traer_Lista(FileGuardar.getSelectedFile());
-
+        try {
+            GUARDAR_ULTIMA_LISTA(FileGuardar.getSelectedFile().getPath());
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void GuardarLista() {
         String Filtroingresado = "";
-        JFileChooser FileGuardar = new JFileChooser("C:\\");
+        JFileChooser FileGuardar = new JFileChooser(ultima_lista);
         FileGuardar.setFileSelectionMode(JFileChooser.FILES_ONLY);
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos REP", "rep");
         FileNameExtensionFilter filtro1 = new FileNameExtensionFilter("Archivos M3U", "m3u");
@@ -1605,6 +1620,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
     private void CARGAR_CONFIGURACIONES() {
         ULTIMA_DIRECCION();
+        ULTIMA_LISTA();
         VOLUMEN();
         MUTE();
         MODO_PRESENTACION();
@@ -1613,6 +1629,10 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
     private void ULTIMA_DIRECCION() {
         ultima_direccion = propiedades_conf.getProperty("ultima_direccion");
+    }
+
+    private void ULTIMA_LISTA() {
+        ultima_lista = propiedades_conf.getProperty(ultima_lista);
     }
 
     private void VOLUMEN() {
@@ -1635,6 +1655,10 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
     public void GUARDAR_ULTIMA_DIRECCION(String Valor) throws FileNotFoundException {
         GUARDAR_LLAVE("ultima_direccion", Valor);
+    }
+
+    public void GUARDAR_ULTIMA_LISTA(String Valor) throws FileNotFoundException {
+        GUARDAR_LLAVE("ultima_lista", Valor);
     }
 
     public void GUARDAR_LLAVE(String llave, String Valor) throws FileNotFoundException {

@@ -22,7 +22,6 @@ public class Equalizador extends javax.swing.JFrame implements ActionListener, C
     private Dimension dim = null;
     boolean estado = false;
     private boolean initDone;
-    GUIReproductor abc;
     private int minGain = 0;
     private int maxGain = 100;
     private int[] gainValue = {50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50};
@@ -50,8 +49,8 @@ public class Equalizador extends javax.swing.JFrame implements ActionListener, C
     public static String[] presets = {"Normal", "Classical", "Club", "Dance", "Full Bass", "Full Bass & Treble", "Full Treble", "Laptop", "Live", "Party", "Pop", "Reggae", "Rock", "Techno"};
 
     /** Creates new form Equalizador */
-    public Equalizador(GUIReproductor aThis) {
-        this.abc = aThis;
+    public Equalizador() {
+        //this.abc = aThis;
         Dimension dim = new Dimension( 448,220 );
         NuevoTamaño_Ventana(dim);
         initComponents();
