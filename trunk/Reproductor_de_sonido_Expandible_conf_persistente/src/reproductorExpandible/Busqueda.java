@@ -14,11 +14,9 @@ public class Busqueda extends javax.swing.JFrame {
     DefaultListModel Elementos;
     Object Nombre_item;
     File Direccion_Archivo;
-    GUIReproductor abc;
-
-    public Busqueda(ListaDobleConOrden ldco1, GUIReproductor un, Tabla tabla) {
-        Busqueda.ldco = ldco1;
-        this.abc = un;
+    Libreria metodos;
+    Busqueda(ListaDobleConOrden ldco, Tabla tabla, Libreria metodos_internos) {
+        this.ldco = ldco;
         initComponents();
         setLocation(400, 400);
         setSize(445, 400);
@@ -27,6 +25,7 @@ public class Busqueda extends javax.swing.JFrame {
         Elementos = new DefaultListModel();
         Lista.setModel(Elementos);
         this.tabla = tabla;
+        metodos =metodos_internos;
     }
 
     @SuppressWarnings("unchecked")
@@ -203,7 +202,9 @@ public class Busqueda extends javax.swing.JFrame {
         int filas = tabla.getMiTabla().getRowCount();
         for (int h = 0; h < filas; h++) {
             if (ruta == tabla.getMiTabla().getValueAt(h, 1).toString()) {
-                abc.Reproducir(h);
+                Libreria.Pista = (h);//resuelto por que no enviaba el numero de pista
+                metodos.Reproducir(h);
+                System.out.println("Pista "+Libreria.Pista);
                 tabla.getMiTabla().changeSelection(h, 1, false, false);
             }
         }
