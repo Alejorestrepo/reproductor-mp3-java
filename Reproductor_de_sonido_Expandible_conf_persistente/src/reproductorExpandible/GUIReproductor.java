@@ -2,51 +2,38 @@ package reproductorExpandible;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import reproductorExpandible.tags.MpegInfo;
 import elementos_de_control.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
-import java.util.Map;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.util.Properties;
-import reproductor.*;
 import javazoom.jlgui.player.amp.visual.ui.SpectrumTimeAnalyzer;
-import javax.sound.sampled.SourceDataLine;
 
 /**
  *
  * @author JONATHAN
  */
-public class GUIReproductor extends javax.swing.JFrame implements ReproductorLanzador {
+public class GUIReproductor extends javax.swing.JFrame {
 //cargar archivo de configuracion
 
     Properties propiedades_conf = new Properties();
     Info informata;
-    MpegInfo atributos;
     Desktop elemento;
     private UIManager.LookAndFeelInfo apariencias[];
     static ListaDobleConOrden ldco = new ListaDobleConOrden();
-    static Tabla tabla;
     Equalizador equalizar;
-    private long secondsAmount = 0;
-    private Map audioInfo = null;
     static File tamañoarchivo;
-    private static Reproductor ReproductorBasico;
     boolean estado = false, repetir = false, aleatorio = false, estado1 = false, listado = false, equalizador = false;
     static boolean duplicado = false;
     String nombre1;
-    public int Contador_de_celda = 0, Pista = 0, control1 = 0, veces = 0, tipo;
-    private double bytesLength;
-    Long duration = null;
-    int horas = 0, minutofinal = 0, minuto, segundos, segundofinal;
+    public int control1 = 0, veces = 0, tipo;
     static boolean noreproducible = false;
     String ultima_direccion = "C:", ultima_lista = "C:";
     int valor_volumen = 50;
     String canonicalPath;
+    Libreria metodos_internos;
 
     /** Creates new form GUIReproductor */
     public GUIReproductor() {
@@ -56,20 +43,11 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
             JOptionPane.showMessageDialog(this, "El sistema no soporta los procedimientos.", "Error", JOptionPane.ERROR_MESSAGE);
         }
         setVisible(true);
-        ReproductorBasico = new Reproductor();
-        atributos = new MpegInfo();
         equalizar = new Equalizador();
-        ReproductorBasico.addBasicPlayerListener(this);
-        tabla = new Tabla(this);
         initComponents();
-        try {
-            canonicalPath = new File(".").getCanonicalPath() + "/conf.txt";
-            propiedades_conf.load(new FileInputStream(canonicalPath));
-        } catch (IOException ex) {
-            Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
-            //System.out.println("No existe fichero se creara uno");
-        }
-        CARGAR_CONFIGURACIONES();
+        metodos_internos = new Libreria(this);
+        metodos_internos.Acceder_Conf();
+        metodos_internos.CARGAR_CONFIGURACIONES(Volumen, ultima_lista, ultima_direccion, estado1, Modo_Presentacion);
         setLocation(400, 200);
         apariencias = UIManager.getInstalledLookAndFeels();
         this.addWindowListener(new WindowAdapter() {
@@ -80,33 +58,11 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         });
     }
 
-    public void BOTON_MUTE_N(boolean estado) {
-        if (estado) {
-            try {
-                SPEAKER.setIcon(new ImageIcon(getClass().getResource("/reproductordesonido/iconos/speaker3.png")));
-                ReproductorBasico.setGain(0);
-            } catch (ReproductorExcepcion ex) {
-            }
-            try {
-                GUARDAR_ULTIMO_MUTE(estado);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            SPEAKER.setIcon(new ImageIcon(getClass().getResource("/reproductordesonido/iconos/speaker2.png")));
-            ModificarVolumen();
-            try {
-                GUARDAR_ULTIMO_MUTE(estado);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         btnAbrir = new javax.swing.JButton();
         btnPlay = new javax.swing.JButton();
         btnStop = new javax.swing.JButton();
@@ -123,6 +79,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         txtBit = new javax.swing.JTextField();
         BtnDetalles = new javax.swing.JButton();
         Panel_espectro = new SpectrumTimeAnalyzer();
+        Progreso_percent = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         MenuPArchivo = new javax.swing.JMenu();
         MenuArchivo = new javax.swing.JMenuItem();
@@ -161,9 +118,29 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         TipoRedondo = new javax.swing.JCheckBoxMenuItem();
         TipoJava = new javax.swing.JCheckBoxMenuItem();
 
-                
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
         setTitle("Reproductor MP3 Java Sistema Palomino");
         setResizable(false);
+        addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                formMouseMoved(evt);
+            }
+        });
+        addWindowStateListener(new java.awt.event.WindowStateListener() {
+            public void windowStateChanged(java.awt.event.WindowEvent evt) {
+                formWindowStateChanged(evt);
+            }
+        });
 
         btnAbrir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/reproductordesonido/iconos/1.JPG"))); // NOI18N
         btnAbrir.addActionListener(new java.awt.event.ActionListener() {
@@ -283,12 +260,16 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         Panel_espectro.setLayout(Panel_espectroLayout);
         Panel_espectroLayout.setHorizontalGroup(
             Panel_espectroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 126, Short.MAX_VALUE)
+            .addGap(0, 167, Short.MAX_VALUE)
         );
         Panel_espectroLayout.setVerticalGroup(
             Panel_espectroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 57, Short.MAX_VALUE)
         );
+
+        Progreso_percent.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        Progreso_percent.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        Progreso_percent.setText("0%");
 
         MenuPArchivo.setText("Archivo");
 
@@ -303,11 +284,6 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
         Menu_Carpeta.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.CTRL_MASK));
         Menu_Carpeta.setText("Añadir Carpeta");
-        Menu_Carpeta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Menu_CarpetaActionPerformed(evt);
-            }
-        });
         MenuPArchivo.add(Menu_Carpeta);
 
         menuURL.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.ALT_MASK));
@@ -563,9 +539,19 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(BtnDetalles)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnLista, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(Progreso1, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(Progreso_percent, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -579,28 +565,23 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
                                 .addComponent(btnAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(2, 2, 2)
                                 .addComponent(btnSiguiente, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
                                 .addComponent(SPEAKER, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(Volumen, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtInformacion, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+                            .addComponent(txtInformacion, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(Posicion, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtBit, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(Panel_espectro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(BtnDetalles, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnLista, javax.swing.GroupLayout.PREFERRED_SIZE, 39, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEqualizador, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(291, 291, 291))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(Progreso1, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(26, Short.MAX_VALUE))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(Posicion, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtBit, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(134, 134, 134)
+                                        .addComponent(btnEqualizador, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(10, 10, 10)
+                                .addComponent(Panel_espectro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -617,24 +598,23 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
                     .addComponent(SPEAKER, 0, 0, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(txtInformacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGap(13, 13, 13)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(7, 7, 7)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(Posicion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtBit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addGap(19, 19, 19)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(BtnDetalles, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(btnEqualizador, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                                .addComponent(btnLista, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Panel_espectro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                .addComponent(Progreso1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(btnEqualizador, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
+                                .addComponent(btnLista, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 16, Short.MAX_VALUE))))
+                    .addComponent(Panel_espectro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(Progreso_percent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Progreso1, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -642,11 +622,11 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     }// </editor-fold>//GEN-END:initComponents
 
     private void MenuArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuArchivoActionPerformed
-        ABRIR("Archivos");
+        metodos_internos.ABRIR("Archivos", ultima_direccion);
     }//GEN-LAST:event_MenuArchivoActionPerformed
 
     private void MenuCarpetaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuCarpetaActionPerformed
-        ABRIR("Carpeta");
+        metodos_internos.ABRIR("Carpeta", ultima_direccion);
 }//GEN-LAST:event_MenuCarpetaActionPerformed
 
     private void MenuOcultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuOcultarActionPerformed
@@ -672,48 +652,48 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     private void EliminarDuplicadoDespuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarDuplicadoDespuesActionPerformed
         PermitirDuplicado.setSelected(false);
         EliminarDuplicadoAuto.setSelected(false);
-        BuscarDuplicaddos();
+        metodos_internos.BuscarDuplicaddos(ldco);
         //Hace q regrese a la primera opcion
         PermitirDuplicado.setSelected(true);
         EliminarDuplicadoDespues.setSelected(false);
 }//GEN-LAST:event_EliminarDuplicadoDespuesActionPerformed
 
     private void BuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuscarActionPerformed
-        Busqueda bcd = new Busqueda(ldco, this, tabla);
+        Busqueda bcd = new Busqueda(ldco, metodos_internos.tabla,metodos_internos);
         bcd.show();
 }//GEN-LAST:event_BuscarActionPerformed
 
     private void EliminarElegidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarElegidoActionPerformed
         //System.out.println(tabla.rutaTabla);
-        NodoDoble auxiliar = ldco.busca((File) tabla.rutaTabla);
+        NodoDoble auxiliar = ldco.busca((File) metodos_internos.tabla.rutaTabla);
         if (auxiliar != null) {
             ldco.elimina(auxiliar);
-            tabla.ActualizaTabla();
+            metodos_internos.tabla.ActualizaTabla();
         }
 }//GEN-LAST:event_EliminarElegidoActionPerformed
 
     private void EliminarTodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarTodoActionPerformed
         ldco.setInicio(null);
-        tabla.inicializaTabla();
+        metodos_internos.tabla.inicializaTabla();
         Habilitar(false);
-        stop();
+        metodos_internos.parar();
         Progreso1.setValue(0);
         Posicion.setText("");
         txtInformacion.setText("");
 }//GEN-LAST:event_EliminarTodoActionPerformed
 
     private void CargarListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarListaActionPerformed
-        CargarLista();
+        metodos_internos.CargarLista(ultima_lista, metodos_internos.tabla);
         Habilitar(true);
 }//GEN-LAST:event_CargarListaActionPerformed
 
     private void GuardarListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarListaActionPerformed
-        GuardarLista();
+        metodos_internos.GuardarLista(ldco, ultima_lista);
 }//GEN-LAST:event_GuardarListaActionPerformed
 
     private void AcercaDEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AcercaDEActionPerformed
-        AcercaDE abc = new AcercaDE();
-        abc.show();
+        Acerca objeto_panel = new Acerca();
+        JOptionPane.showMessageDialog(this, objeto_panel, "Acerca de:", JOptionPane.INFORMATION_MESSAGE);
 }//GEN-LAST:event_AcercaDEActionPerformed
 
     private void WebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WebActionPerformed
@@ -746,17 +726,17 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 }//GEN-LAST:event_TipoJavaActionPerformed
 
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
-        ABRIR("Archivos");
+        metodos_internos.ABRIR("Archivos", ultima_direccion);
 }//GEN-LAST:event_btnAbrirActionPerformed
 
     private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
-        SeleccionarArchivo();
+        metodos_internos.SeleccionarArchivo();
 }//GEN-LAST:event_btnPlayActionPerformed
 
     private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
-        stop();
+        metodos_internos.parar();
         SPEAKER.setIcon(new ImageIcon(getClass().getResource("/reproductordesonido/iconos/speaker1.png")));
-        secondsAmount = 0;
+        metodos_internos.secondsAmount = 0;
         SpectrumTimeAnalyzer analizer = (SpectrumTimeAnalyzer) Panel_espectro;
         analizer.stopDSP();
         analizer.closeDSP();
@@ -766,15 +746,15 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
         estado = !estado;
         if (estado) {
-            pause();
+            metodos_internos.pausar();
         } else {
-            resume();
+            metodos_internos.resumir();
         }
 }//GEN-LAST:event_btnPausaActionPerformed
 
     private void btnAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnteriorActionPerformed
         try {
-            SiguienteAnterior(0, control1);
+            metodos_internos.SiguienteAnterior(0, control1);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "No encuentro pista", "Error de usuario", JOptionPane.ERROR_MESSAGE);
         }
@@ -782,7 +762,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
         try {
-            SiguienteAnterior(1, control1);
+            metodos_internos.SiguienteAnterior(1, control1);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "No encuentro pista", "Error de usuario", JOptionPane.ERROR_MESSAGE);
         }
@@ -790,34 +770,23 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
     private void SPEAKERActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SPEAKERActionPerformed
         estado1 = !estado1;
-        BOTON_MUTE_N(estado1);
+        metodos_internos.BOTON_MUTE_N(estado, SPEAKER, Volumen);
     }//GEN-LAST:event_SPEAKERActionPerformed
 
     private void VolumenMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_VolumenMouseDragged
-        ModificarVolumen();
+        metodos_internos.ModificarVolumen(Volumen);
 }//GEN-LAST:event_VolumenMouseDragged
 
     private void Progreso1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Progreso1MouseDragged
-        try {
-            int cal = (int) (tamañoarchivo.length() * Progreso1.getValue() / 100);
-            ReproductorBasico.buscar_saltar(cal);
-            if (SPEAKER.isSelected()) {
-                ReproductorBasico.setGain(0);
-            } else {
-                ModificarVolumen();
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "No lo movere xq no estoy reproduciendo", "Error", JOptionPane.ERROR_MESSAGE);
-            Progreso1.setValue(0);
-        }
+        metodos_internos.MOVIDA_MOUSE(SPEAKER, Progreso1, Volumen);
 }//GEN-LAST:event_Progreso1MouseDragged
 
     private void btnListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListaActionPerformed
         listado = !listado;
         if (listado) {
-            tabla.setVisible(true);
+            metodos_internos.tabla.setVisible(true);
         } else {
-            tabla.setVisible(false);
+            metodos_internos.tabla.setVisible(false);
         }
 
     }//GEN-LAST:event_btnListaActionPerformed
@@ -862,26 +831,13 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         if (desicion == 1) {
             //agregar
         } else {
-
-            try {
-                direccion = new URL(direccionS);
-            } catch (MalformedURLException ex) {
-                JOptionPane.showMessageDialog(null, "Ingreso mal su URL");
-            }
-            try {
-                loadFile(direccion);
-                play();
-                ModificarVolumen();
-                MOSTRARINFO(direccionS, direccionS);
-            } catch (ReproductorExcepcion ex) {
-                JOptionPane.showMessageDialog(null, "No se puede reproducir");
-            }
+            CARGAR_DIRECCION_INT(direccionS, direccion);
         }
     }//GEN-LAST:event_menuURLActionPerformed
 
     private void BtnDetallesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnDetallesActionPerformed
         try {
-            informata = new Info(atributos);
+            informata = new Info(metodos_internos.atributos);
             informata.show();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Reprodusca primero el archivo por favor", "Error de Usuario", JOptionPane.WARNING_MESSAGE);
@@ -915,14 +871,14 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         if (!Modo_Presentacion.isSelected()) {
             JOptionPane.showConfirmDialog(null, "De este modo se desactiva reproduccion un 10% del audio", "Aviso", JOptionPane.DEFAULT_OPTION);
             try {
-                GUARDAR_ULTIMO_MODO(Modo_Presentacion.isSelected());
+                metodos_internos.GUARDAR_ULTIMO_MODO(Modo_Presentacion.isSelected());
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if (Modo_Presentacion.isSelected()) {
             JOptionPane.showConfirmDialog(null, "De este modo solo reproducira un 10% del audio", "Aviso", JOptionPane.DEFAULT_OPTION);
             try {
-                GUARDAR_ULTIMO_MODO(Modo_Presentacion.isSelected());
+                metodos_internos.GUARDAR_ULTIMO_MODO(Modo_Presentacion.isSelected());
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -931,12 +887,26 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     }//GEN-LAST:event_Modo_PresentacionActionPerformed
 
     private void VolumenStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_VolumenStateChanged
-        ModificarVolumen();
+        metodos_internos.ModificarVolumen(Volumen);
     }//GEN-LAST:event_VolumenStateChanged
 
     private void Menu_CarpetaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Menu_CarpetaActionPerformed
-        ABRIR("Carpeta");
+        metodos_internos.ABRIR("Carpeta", ultima_direccion);
     }//GEN-LAST:event_Menu_CarpetaActionPerformed
+
+    private void formMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseMoved
+        // TODO add your handling code here:
+        //System.out.println("Lado X "+evt.getPoint().getX()+" Lado Y "+evt.getPoint().getY());
+
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        //System.out.println((int) d.getWidth() + " otro  " + (int) d.getHeight());
+    }//GEN-LAST:event_formMouseMoved
+
+    private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
+        // TODO add your handling code here:
+        evt.getWindow().getX();
+        //System.out.println("Lado X " + evt.getWindow().getX());
+    }//GEN-LAST:event_formWindowStateChanged
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
@@ -944,68 +914,6 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
                 new GUIReproductor().setVisible(true);
             }
         });
-    }
-
-    public void abierto(Map Infoaudio) {
-        if (Infoaudio.containsKey("audio.length.bytes")) {
-            bytesLength = Double.parseDouble(Infoaudio.get("audio.length.bytes").toString());
-        }
-        audioInfo = Infoaudio;
-        SpectrumTimeAnalyzer analizer = (SpectrumTimeAnalyzer) Panel_espectro;
-        analizer.stopDSP();
-        analizer.closeDSP();
-        analizer.setupDSP((SourceDataLine) audioInfo.get("basicplayer.sourcedataline"));
-        analizer.startDSP((SourceDataLine) audioInfo.get("basicplayer.sourcedataline"));
-    }
-
-    public void progreso(int bytesread, long microseconds, byte[] pcmdata, Map properties) {
-        Procesar_Progreso(bytesread, microseconds, pcmdata, properties);
-
-    }
-
-    public void estadoActualizado(ReproductorEvento event) {
-        System.out.println("evento " + event);
-    }
-
-    public void setControlador(Controlador controller) {
-        ReproductorBasico = (Reproductor) controller;
-    }
-
-    public void play() {
-        try {
-            ReproductorBasico.reproducir();
-        } catch (ReproductorExcepcion e) {
-// TODO Auto-generated catch block
-        }
-    }
-
-    public void stop() {
-        try {
-            ReproductorBasico.parar();
-        } catch (ReproductorExcepcion e) {
-// TODO Auto-generated catch block
-        }
-    }
-
-    public void pause() {
-        try {
-            ReproductorBasico.pausar();
-        } catch (ReproductorExcepcion e) {
-// TODO Auto-generated catch block
-        }
-    }
-
-    public void resume() {
-        try {
-            ReproductorBasico.resumir();
-        } catch (ReproductorExcepcion e) {
-// TODO Auto-generated catch block
-        }
-    }
-
-    public static void loadFile(String ruta) throws ReproductorExcepcion {
-        tamañoarchivo = new File(ruta);
-        ReproductorBasico.abrir(new File(ruta));
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem AcercaDE;
@@ -1028,21 +936,22 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     private javax.swing.JMenu MenuPArchivo;
     private javax.swing.JMenu MenuTema;
     private javax.swing.JMenuItem Menu_Carpeta;
-    private javax.swing.JCheckBoxMenuItem Modo_Presentacion;
+    public javax.swing.JCheckBoxMenuItem Modo_Presentacion;
     private javax.swing.JRadioButtonMenuItem NoRepetir;
     public javax.swing.JMenu OpcionLista;
     public javax.swing.JPanel Panel_espectro;
     public javax.swing.JRadioButtonMenuItem PermitirDuplicado;
     private javax.swing.JRadioButtonMenuItem PermitirIrre;
-    private javax.swing.JTextField Posicion;
-    private javax.swing.JSlider Progreso1;
+    public javax.swing.JTextField Posicion;
+    public javax.swing.JSlider Progreso1;
+    public javax.swing.JLabel Progreso_percent;
     private javax.swing.JRadioButtonMenuItem RepetirAleatorio;
     private javax.swing.JRadioButtonMenuItem RepetirLista;
-    private javax.swing.JButton SPEAKER;
+    public javax.swing.JButton SPEAKER;
     private javax.swing.JCheckBoxMenuItem TipoJava;
     private javax.swing.JCheckBoxMenuItem TipoRedondo;
     private javax.swing.JCheckBoxMenuItem TipoWindows;
-    private javax.swing.JSlider Volumen;
+    public javax.swing.JSlider Volumen;
     private javax.swing.JMenuItem Web;
     private javax.swing.JButton btnAbrir;
     private javax.swing.JButton btnAnterior;
@@ -1053,72 +962,19 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
     private javax.swing.JButton btnSiguiente;
     private javax.swing.JButton btnStop;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JMenuItem menuSalir;
     private javax.swing.JMenuItem menuURL;
-    private javax.swing.JTextField txtBit;
-    private javax.swing.JTextField txtInformacion;
+    public javax.swing.JTextField txtBit;
+    public javax.swing.JTextField txtInformacion;
     // End of variables declaration//GEN-END:variables
 
-    public void ABRIR(String tipo) {
-        ULTIMA_DIRECCION();
-        JFileChooser archivo = new JFileChooser(ultima_direccion);
-        archivo.setMultiSelectionEnabled(true);
-        //archivo.setDragEnabled(true);
-        archivo.getDragEnabled();
-        FileNameExtensionFilter filtro_total = new FileNameExtensionFilter("Audio", "mp3", "wav", "ogg", "flac");
-        FileNameExtensionFilter filtro0 = new FileNameExtensionFilter("Archivos MP3", "mp3");
-        FileNameExtensionFilter filtro1 = new FileNameExtensionFilter("Archivos WAV", "wav");
-        FileNameExtensionFilter filtro2 = new FileNameExtensionFilter("Archivos OGG", "ogg");
-        FileNameExtensionFilter filtro3 = new FileNameExtensionFilter("Archivos FLAC", "flac");
-        archivo.setFileFilter(filtro0);
-        archivo.setFileFilter(filtro1);
-        archivo.setFileFilter(filtro2);
-        archivo.setFileFilter(filtro3);
-        archivo.setFileFilter(filtro_total);
-        if (tipo.equals("Archivos")) {
-            archivo.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-            int resultado = archivo.showOpenDialog(this);
-            if (resultado == JFileChooser.CANCEL_OPTION) {
-                return;
-            } else {
-                try {
-                    GUARDAR_ULTIMA_DIRECCION(archivo.getSelectedFile().getParent());
-                    tabla.LlenarTabla(archivo.getSelectedFiles());
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this, "Error Cargando Archivo", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        }
-        if (tipo.equals("Carpeta")) {
-            archivo.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            int resultado = archivo.showOpenDialog(this);
-            if (resultado == JFileChooser.CANCEL_OPTION) {
-                return;
-            }
-            try {
-                GUARDAR_ULTIMA_DIRECCION(archivo.getSelectedFile().getPath());
-                tabla.llamar(archivo.getSelectedFile());
-            } catch (ArrayIndexOutOfBoundsException e) {
-                //System.out.println(e);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Error Cargando Carpeta", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
     public void MinimizarAlReloj() {
-
-        try {
-            setVisible(false);
-            GUARDAR_MODO_Oculto(true);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        setVisible(false);
         veces += 1;
         //dispose();
         //se declara el objeto tipo icono
@@ -1172,7 +1028,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
             Reproducir.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
-                    SeleccionarArchivo();
+                    metodos_internos.SeleccionarArchivo();
                 }
             });
             Pausar.addActionListener(new ActionListener() {
@@ -1180,23 +1036,23 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
                 public void actionPerformed(ActionEvent e) {
                     estado = !estado;
                     if (estado) {
-                        pause();
+                        metodos_internos.pausar();
                     } else {
-                        resume();
+                        metodos_internos.resumir();
                     }
                 }
             });
             Detener.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
-                    stop();
+                    metodos_internos.parar();
                 }
             });
             PistaAnterior.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        SiguienteAnterior(0, control1);
+                        metodos_internos.SiguienteAnterior(0, control1);
                     } catch (Exception et) {
                         JOptionPane.showMessageDialog(null, "No encuentro pista", "Error de usuario", JOptionPane.ERROR_MESSAGE);
                     }
@@ -1206,7 +1062,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        SiguienteAnterior(1, control1);
+                        metodos_internos.SiguienteAnterior(1, control1);
                     } catch (Exception et) {
                         JOptionPane.showMessageDialog(null, "No encuentro pista", "Error de usuario", JOptionPane.ERROR_MESSAGE);
                     }
@@ -1216,25 +1072,20 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
                 public void actionPerformed(ActionEvent e) {
                     Volumen.setValue(Volumen.getValue() + 10);
-                    ModificarVolumen();
+                    metodos_internos.ModificarVolumen(Volumen);
                 }
             });
             bajarVolumen.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
                     Volumen.setValue(Volumen.getValue() - 10);
-                    ModificarVolumen();
+                    metodos_internos.ModificarVolumen(Volumen);
                 }
             });
             mostrar.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
                     setVisible(true);
-                    try {
-                        GUARDAR_MODO_Oculto(false);
-                    } catch (FileNotFoundException ex) {
-                        Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
-                    }
                 }
             });
             iconoSystemTray.addMouseListener(new MouseAdapter() {
@@ -1262,76 +1113,6 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         }
     }
 
-    public void CargarLista() {
-        JFileChooser FileGuardar = new JFileChooser(ultima_lista);
-        FileGuardar.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos REP", "rep");
-        FileNameExtensionFilter filtro1 = new FileNameExtensionFilter("Archivos M3U", "m3u");
-        FileNameExtensionFilter filtro2 = new FileNameExtensionFilter("Archivos Soportados", "m3u", "rep");
-        FileGuardar.setFileFilter(filtro);
-        FileGuardar.setFileFilter(filtro1);
-        FileGuardar.setFileFilter(filtro2);
-        int resultado = FileGuardar.showOpenDialog(this);
-        if (resultado == JFileChooser.CANCEL_OPTION) {
-            return;
-        }
-        tabla.Traer_Lista(FileGuardar.getSelectedFile());
-        try {
-            GUARDAR_ULTIMA_LISTA(FileGuardar.getSelectedFile().getPath());
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void GuardarLista() {
-        String Filtroingresado = "";
-        JFileChooser FileGuardar = new JFileChooser(ultima_lista);
-        FileGuardar.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos REP", "rep");
-        FileNameExtensionFilter filtro1 = new FileNameExtensionFilter("Archivos M3U", "m3u");
-        FileGuardar.setFileFilter(filtro);
-        FileGuardar.setFileFilter(filtro1);
-
-        int resultado = FileGuardar.showSaveDialog(this);
-
-        if (resultado == JFileChooser.CANCEL_OPTION) {
-            return;
-        }
-        NodoDoble auxiliar = ldco.getInicio();
-
-        if (FileGuardar.getFileFilter().getDescription().compareTo("Archivos M3U") == 0) {
-            Filtroingresado = ".m3u";
-        } else if (FileGuardar.getFileFilter().getDescription().compareTo("Archivos REP") == 0) {
-            Filtroingresado = ".rep";
-        }
-        try {
-            FileOutputStream salida = null;
-
-            if (FileGuardar.getSelectedFile().toString().indexOf(Filtroingresado) != -1) {
-                salida = new FileOutputStream(FileGuardar.getSelectedFile());
-            } else {
-                salida = new FileOutputStream(FileGuardar.getSelectedFile() + Filtroingresado);
-            }
-
-
-            BufferedOutputStream memoria = new BufferedOutputStream(salida);
-            while (auxiliar != null) {
-                Direcciones dir = auxiliar.getNodo();
-                Object datos = dir.getDireccion();
-                memoria.write((datos.toString() + System.getProperty("line.separator")).getBytes());//Separa por lineas
-
-                //avanza al nodo siguiente
-                auxiliar = auxiliar.getApuntSgte();
-            }
-            memoria.flush();
-            salida.close();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error Guardando Archivo!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-
-    }
-
     public void CambiarApariencia(int i) {
         try {
             UIManager.setLookAndFeel(apariencias[i].getClassName());
@@ -1348,23 +1129,6 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
         GuardarLista.setEnabled(b);
     }
 
-    public void MOSTRARINFO(String nombre, String direccion) {
-        final double constante = 6.03;
-        try {
-            atributos.load(new File(direccion));
-            duration = atributos.getMilisegundos();
-            String formatohora = FormatoHoras(atributos.getTiempo_en_segundos());
-            txtInformacion.setText(nombre + "  " + "(" + formatohora + ")");
-            txtInformacion.setSize((int) (constante * txtInformacion.getText().length()), 20);//Longitud de ventana
-            Posicion.setText((Pista + 1) + " de " + tabla.getMiTabla().getRowCount());
-            txtBit.setText(atributos.getBitRate() / 1000 + " Kbps  " + atributos.getSamplingRate() / 1000 + " KHZ");
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Error de IO");
-        } catch (UnsupportedAudioFileException ex) {
-            JOptionPane.showMessageDialog(null, "Error archivo no soportado");
-        }
-    }
-
     public void Aparecer() {
         try {
             elemento.browse(new URI("http://jonathan-palomino.blogspot.com/"));
@@ -1377,22 +1141,7 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
     }
 
-    public void BuscarDuplicaddos() {
-        for (int i = 0; i < tabla.getMiTabla().getRowCount(); i++) {
-            for (int j = 0; j < i; j++) {
-                if (tabla.getMiTabla().getValueAt(i, 1).toString().compareTo(tabla.getMiTabla().getValueAt(j, 1).toString()) == 0) {
-                    //Eliminar
-                    NodoDoble auxiliar = ldco.busca(new File(tabla.getMiTabla().getValueAt(i, 1).toString()));
-                    if (auxiliar != null) {
-                        ldco.elimina(auxiliar);
-                    }
-                }
-            }
-        }
-        tabla.ActualizaTabla();
-    }
-
-    private void Contactar() {
+    public void Contactar() {
 
         String email = email = "jhonelfenix@gmail.com";
         String mail = "mailto:" + email;
@@ -1405,285 +1154,15 @@ public class GUIReproductor extends javax.swing.JFrame implements ReproductorLan
 
     }
 
-    public void SeleccionarArchivo() {
-        if (tabla.getMiTabla().getRowCount() != 0) {
-            Pista = tabla.Contador_de_celda;
-            Reproducir(tabla.Contador_de_celda);//Manda el numero de celda para que reprodusca
-        }
-
-    }
-
-    public void ProgresarBarra(File tamañoarchivo, int progreso) {
-        int tamano = (int) tamañoarchivo.length();
+    public void CARGAR_DIRECCION_INT(String direccionS, URL direccion) throws HeadlessException {
         try {
-            int valor1 = progreso * 100 / tamano;
-            Progreso1.setValue(valor1);
-        } catch (Exception w) {
+            direccion = new URL(direccionS);
+        } catch (MalformedURLException ex) {
+            JOptionPane.showMessageDialog(null, "Ingreso mal su URL");
         }
-        if (Progreso1.getValue() >= 99 && Modo_Presentacion.isSelected() == false) {
-            if (repetir && Pista == (tabla.getMiTabla().getRowCount() - 1)) {
-                Reproducir(0);
-            } else {
-                SiguienteAnterior(1, control1);
-            }
-            Progreso1.setValue(0);
-        } else if (Progreso1.getValue() >= 10 && Modo_Presentacion.isSelected()) {
-            if (repetir && Pista == (tabla.getMiTabla().getRowCount() - 1)) {
-                Reproducir(0);
-            } else {
-                SiguienteAnterior(1, control1);
-            }
-            Progreso1.setValue(0);
-        }
-    }
-
-    public void Reproducir(int Pista) {
-        Object direccion = tabla.getMiTabla().getValueAt(Pista, 1);
-        // System.out.println("Pista "+direccion);//Nombre de la celda
-        String file = direccion.toString();
-        nombre1 = tabla.getMiTabla().getValueAt(Pista, 0).toString();
-        try {
-            loadFile(file);
-            play();
-            ModificarVolumen();
-            SPEAKER.setIcon(new ImageIcon(getClass().getResource("/reproductordesonido/iconos/speaker2.png")));
-            MOSTRARINFO(nombre1, file);
-
-        } catch (ReproductorExcepcion e) {
-            // TODO Auto-generated catch block
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error de Archivo! \nElija otro ", "Error Fatal", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    public void ModificarVolumen() {
-        Volumen.setToolTipText(String.valueOf(Volumen.getValue()));
-        try {
-            int Valor_ganancia = Volumen.getValue();
-            int Maxima_ganancia = Volumen.getMaximum();
-            if (Valor_ganancia == 0) {
-                ReproductorBasico.setGain(0);
-            } else {
-                ReproductorBasico.setGain(((double) Valor_ganancia / (double) Maxima_ganancia));
-            }
-            try {
-                GUARDAR_VOLUMEN(Volumen.getValue());
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } catch (ReproductorExcepcion ex) {
-            //System.out.println("Error");
-        }
-    }
-
-    public void SiguienteAnterior(int valor, int control) {
-        //control ==1 es para aleatorio
-        if (valor == 0 && control == 1) /// 0 es anterior
-        {
-            if (Pista == 0) {
-                Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-            } else {
-                Pista = (int) (Math.random() * (tabla.getMiTabla().getRowCount() - 1));
-                Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-            }
-        }
-        if (valor == 0 && control == 0) /// 0 es anterior
-        {
-            if (Pista == 0) {
-                Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-            } else {
-                Pista = Pista - 1;
-                Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-            }
-        }
-        if (valor == 1 && control == 0) /// 1 es posterior
-        {
-            if ((Pista + 1) == tabla.getMiTabla().getRowCount()) {
-                //System.out.println("al inicio");
-                //manda el contador al inicio paran emular un regreso
-                Pista = 0;
-                Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-            } else {
-                try {
-                    Pista = Pista + 1;
-                    Reproducir(Pista);
-                    tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-                } catch (Exception e) {
-                    Reproducir(Pista - 1);
-                    tabla.getMiTabla().changeSelection((Pista - 1), 1, false, false);
-                    Pista = Pista - 1;
-                }
-            }
-        }
-        if (valor == 1 && control == 1) /// 1 es posterior
-        {
-            try {
-                Pista = (int) (Math.random() * (tabla.getMiTabla().getRowCount() - 1));
-                Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-            } catch (Exception e) {
-                Reproducir(Pista - 1);
-                tabla.getMiTabla().changeSelection((Pista - 1), 1, false, false);
-                Pista = Pista - 1;
-            }
-        }
-    }
-
-    private void Procesar_Progreso(int bytes_leidos, long micro_segundos, byte[] pcmdata, Map propiedades) {
-        SpectrumTimeAnalyzer analyzer = (SpectrumTimeAnalyzer) Panel_espectro;
-        analyzer.writeDSP(pcmdata);
-        float progressUpdate = (float) (bytes_leidos * 1.0f / bytesLength * 1.0f);
-        int progressNow = (int) (bytesLength * progressUpdate);
-        ProgresarBarra(tamañoarchivo, progressNow);
-        int byteslength = -1;
-        long total = -1;
-        if (total <= 0) {
-            total = (long) Math.round(duration / 1000);
-        }
-        // If it fails again then it might be stream => Total = -1
-        if (total <= 0) {
-            total = -1;
-        }
-        if (audioInfo.containsKey("audio.length.bytes")) {
-            byteslength = ((Integer) audioInfo.get("audio.length.bytes")).intValue();
-        }
-        float progress = -1.0f;
-        if ((bytes_leidos > 0) && ((byteslength > 0))) {
-            progress = bytes_leidos * 1.0f / byteslength * 1.0f;
-        }
-        if (audioInfo.containsKey("audio.type")) {
-            String audioformat = (String) audioInfo.get("audio.type");
-            if (audioformat.equalsIgnoreCase("mp3")) {
-                // Equalizer
-                if (propiedades.containsKey("mp3.equalizer")) {
-                    equalizar.setBands((float[]) propiedades.get("mp3.equalizer"));
-                }
-                if (total > 0) {
-                    secondsAmount = (long) (total * progress);
-                } else {
-                    secondsAmount = -1;
-                }
-            } else if (audioformat.equalsIgnoreCase("wave")) {
-                secondsAmount = (long) (total * progress);
-            } else {
-                secondsAmount = (long) Math.round(micro_segundos / 1000000);
-                equalizar.setBands(null);
-            }
-        } else {
-            secondsAmount = (long) Math.round(micro_segundos / 1000000);
-            equalizar.setBands(null);
-        }
-    }
-
-    private void loadFile(URL direccion) throws ReproductorExcepcion {
-        tamañoarchivo = new File(direccion.toString());
-        ReproductorBasico.abrir(direccion);
-    }
-
-    private String FormatoHoras(double tiempo_en_segundos) {
-        double ensegundos = tiempo_en_segundos; //tiene 2 decimales
-        double enminutos = (int) (ensegundos / 60 * 100) / 100.0;
-        minuto = (int) enminutos;
-        if (minuto >= 60) {
-            horas = minuto / 60;
-            minutofinal = minuto - (horas * 60);
-        } else {
-            minutofinal = minuto;
-        }
-        segundos = (int) Math.round((enminutos - minuto) * 60);
-        segundofinal = segundos;
-        return DevolverFormateado(horas, minutofinal, segundofinal);
-    }
-
-    private String DevolverFormateado(int horas, int minutofinal, int segundofinal) {
-        String hora, minutos, segundo;
-        hora = String.valueOf(horas);
-        minutos = String.valueOf(minutofinal);
-        segundo = String.valueOf(segundofinal);
-        if (hora.length() == 1) {
-            hora = "0" + hora;
-        }
-        if (minutos.length() == 1) {
-            minutos = "0" + minutos;
-        }
-        if (segundo.length() == 1) {
-            segundo = "0" + segundo;
-        }
-        return (hora + ":" + minutos + ":" + segundo);
-
-    }
-
-    private void CARGAR_CONFIGURACIONES() {
-        ULTIMA_DIRECCION();
-        ULTIMA_LISTA();
-        VOLUMEN();
-        MUTE();
-        MODO_PRESENTACION();
-        MODO_OCULTO();
-    }
-
-    private void ULTIMA_DIRECCION() {
-        ultima_direccion = propiedades_conf.getProperty("ultima_direccion");
-    }
-
-    private void ULTIMA_LISTA() {
-        ultima_lista = propiedades_conf.getProperty(ultima_lista);
-    }
-
-    private void VOLUMEN() {
-        valor_volumen = Integer.parseInt(propiedades_conf.getProperty("volumen"));
-        Volumen.setValue(valor_volumen);
-    }
-
-    private void MUTE() {
-        estado1 = Boolean.valueOf(propiedades_conf.getProperty("mute"));
-    }
-
-    private void MODO_PRESENTACION() {
-        Modo_Presentacion.setState(Boolean.valueOf(propiedades_conf.getProperty("modo_presentacion")));
-    }
-
-    public void GUARDAR_VOLUMEN(int value) throws FileNotFoundException {
-        //System.out.println(String.valueOf(value));
-        GUARDAR_LLAVE("volumen", String.valueOf(value));
-    }
-
-    public void GUARDAR_ULTIMA_DIRECCION(String Valor) throws FileNotFoundException {
-        GUARDAR_LLAVE("ultima_direccion", Valor);
-    }
-
-    public void GUARDAR_ULTIMA_LISTA(String Valor) throws FileNotFoundException {
-        GUARDAR_LLAVE("ultima_lista", Valor);
-    }
-
-    public void GUARDAR_LLAVE(String llave, String Valor) throws FileNotFoundException {
-        propiedades_conf.setProperty(llave, Valor);
-        propiedades_conf.save(new FileOutputStream(canonicalPath), null);
-    }
-
-    public void GUARDAR_ULTIMO_MUTE(boolean estado1) throws FileNotFoundException {
-        GUARDAR_LLAVE("mute", String.valueOf(estado1));
-    }
-
-    public void GUARDAR_ULTIMO_MODO(boolean selected) throws FileNotFoundException {
-        GUARDAR_LLAVE("modo_presentacion", String.valueOf(selected));
-    }
-
-    private void MODO_OCULTO() {
-        boolean modo_oculto = (Boolean.valueOf(propiedades_conf.getProperty("modo_oculto")));
-        //System.out.println(modo_oculto);
-        if (modo_oculto) {
-            MinimizarAlReloj();
-        }
-    }
-
-    public void GUARDAR_MODO_Oculto(boolean selected) throws FileNotFoundException {
-        GUARDAR_LLAVE("modo_oculto", String.valueOf(selected));
-        //System.out.println(selected);
+        metodos_internos.loadFile(direccion);
+        metodos_internos.reproducir();
+        metodos_internos.ModificarVolumen(Volumen);
+        metodos_internos.MOSTRARINFO(nombre1, direccionS, txtInformacion, Posicion, txtBit);
     }
 }

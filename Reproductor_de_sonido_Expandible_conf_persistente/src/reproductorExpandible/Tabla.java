@@ -17,15 +17,13 @@ import reproductor.ReproductorExcepcion;
  * @author JONATHAN
  */
 public class Tabla extends javax.swing.JFrame {
-
-    GUIReproductor abc;
     private static DefaultTableModel miModelo;
     public String[][] data = {};
     int Contador_de_celda = 0;
-    public static int eliminados=0;
+    public static int eliminados = 0;
     Object rutaTabla;
     static Direcciones Direccion;
-
+GUIReproductor abc;
     static JTable getMiTabla() {
         return Tabla;
     }
@@ -35,9 +33,8 @@ public class Tabla extends javax.swing.JFrame {
     }
 
     /** Creates new form Tabla */
-    public Tabla(GUIReproductor aThis) {
+    public Tabla(GUIReproductor abc) {
         initComponents();
-        abc = aThis;
         setLocation(400, 400);
         setSize(445, 180);
         miModelo = new DefaultTableModel(data, new String[]{"Lista de Reproduccion", "Ruta"}) {
@@ -48,6 +45,7 @@ public class Tabla extends javax.swing.JFrame {
         };
         Tabla.setModel(miModelo);
         jScrollPane1.setViewportView(Tabla);
+        this.abc=abc;
 
         new Archivo_Jalar_Pegar(this, new Ejecutador() {
 
@@ -56,11 +54,12 @@ public class Tabla extends javax.swing.JFrame {
                     try {
                         if (files[i].isFile())//Verificar que es un archivo y no una carpeta
                         {
-                            if (files[i].getName().contains(".mp3") || files[i].getName().contains(".ogg") || files[i].getName().contains(".wav")|| files[i].getName().contains(".flac")) {
-                                String nom = files[i].getName();
-                                File dat = new File(files[i].getPath());
-                                Enviar(nom, dat);
-                            } else if (files[i].getName().contains(".rep") || files[i].getName().contains(".m3u")) {
+                            String[] extencion_archivo = {".mp3", ".wav", ".ogg", ".flac"};
+                            String[] extencion_lista = {".rep", ".m3u"};
+                            if (Validaciones(files, extencion_archivo)) {
+                                Enviar(files[i].getName(), new File(files[i].getPath()));
+                            }
+                            else if (Validaciones(files, extencion_lista)) {
                                 Traer_Lista(files[i]);
                             }
                         }
@@ -71,8 +70,17 @@ public class Tabla extends javax.swing.JFrame {
                     }
                 }   // end for: through each dropped file
             }   // end filesDropped
+
+            private boolean Validaciones(File[] files, String[] extenciones) {
+                boolean estado = false;
+                for (int i = 0; i < extenciones.length; i++) {
+                    estado = estado || files[i].getName().contains(extenciones[i]);
+                }
+                return estado;
+            }
         }); // end FileDrop.Listener
     }
+
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -134,7 +142,7 @@ public class Tabla extends javax.swing.JFrame {
         //System.out.println("aparecio "+uno);
         if (evt.getClickCount() == 2) {
             //System.out.println(evt.getClickCount() + " archivo " + rutaTabla + " ruta " + Contador_de_celda);
-            abc.Pista = Contador_de_celda;
+            Libreria.Pista = Contador_de_celda;
             Reproduce(rutaTabla);
         }
 
@@ -168,48 +176,47 @@ public class Tabla extends javax.swing.JFrame {
         }
     }
 
-  public static void Enviar(String nombre, File archivo) {
-    IngresaDatos(nombre, archivo);
-    if (GUIReproductor.noreproducible) {
-      try {
-        GUIReproductor.loadFile(archivo.toString());
-      }
-      catch (ReproductorExcepcion ex) {
-        BuscarIrreproducibles();
-      }
-    }
-    if (GUIReproductor.duplicado) {
-      NodoDoble aux = GUIReproductor.ldco.busca(archivo);
-      if (aux == null) {
-        GUIReproductor.ldco.agrega(Direccion);
-        Object[] datos = { Direccion.getNombre(), Direccion.getDireccion() };
-        getMiModelo().addRow(datos);
-        GUIReproductor.Habilitar(true);
-      }
-    } else {
-      GUIReproductor.ldco.agrega(Direccion);
-      Object[] datos = { Direccion.getNombre(), Direccion.getDireccion() };
-      getMiModelo().addRow(datos);
-      GUIReproductor.Habilitar(true);
-    }
-  }
-
-      public static void BuscarIrreproducibles()
-  {
-    for (int i = 0; i < getMiTabla().getRowCount(); ++i) {
-      String cadarchivo = getMiTabla().getValueAt(i, 1).toString();
-      try {
-        GUIReproductor.loadFile(cadarchivo);
-      } catch (ReproductorExcepcion ex) {
-        NodoDoble auxiliar = GUIReproductor.ldco.busca(new File(cadarchivo));
-        if (auxiliar != null) {
-          GUIReproductor.ldco.elimina(auxiliar);
-          eliminados++;
+    public static void Enviar(String nombre, File archivo) {
+        IngresaDatos(nombre, archivo);
+        if (GUIReproductor.noreproducible) {
+            try {
+                Libreria.loadFile(archivo.toString());
+            } catch (ReproductorExcepcion ex) {
+                BuscarIrreproducibles();
+            }
         }
-      }
+        if (GUIReproductor.duplicado) {
+            NodoDoble aux = GUIReproductor.ldco.busca(archivo);
+            if (aux == null) {
+                GUIReproductor.ldco.agrega(Direccion);
+                Object[] datos = {Direccion.getNombre(), Direccion.getDireccion()};
+                getMiModelo().addRow(datos);
+                GUIReproductor.Habilitar(true);
+            }
+        } else {
+            GUIReproductor.ldco.agrega(Direccion);
+            Object[] datos = {Direccion.getNombre(), Direccion.getDireccion()};
+            getMiModelo().addRow(datos);
+            GUIReproductor.Habilitar(true);
+        }
     }
-    ActualizaTabla();
-  }
+
+    public static void BuscarIrreproducibles() {
+        for (int i = 0; i < getMiTabla().getRowCount(); ++i) {
+            String cadarchivo = getMiTabla().getValueAt(i, 1).toString();
+            try {
+                Libreria.loadFile(cadarchivo);
+            } catch (ReproductorExcepcion ex) {
+                NodoDoble auxiliar = GUIReproductor.ldco.busca(new File(cadarchivo));
+                if (auxiliar != null) {
+                    GUIReproductor.ldco.elimina(auxiliar);
+                    eliminados++;
+                }
+            }
+        }
+        ActualizaTabla();
+    }
+
     public static void inicializaTabla() {
         // obtiene numero de filas de la tabla
         int filas = getMiTabla().getRowCount();
@@ -227,7 +234,7 @@ public class Tabla extends javax.swing.JFrame {
         for (int t = 0; t < tamaño; t++) {
             if (Elementos[t].isFile())//Verificar que es un archivo y no una carpeta
             {
-                if (Elementos[t].getName().contains(".mp3") || Elementos[t].getName().contains(".ogg") || Elementos[t].getName().contains(".wav")|| Elementos[t].getName().contains(".flac")) {//Filtrando archivos a agregar
+                if (Elementos[t].getName().contains(".mp3") || Elementos[t].getName().contains(".ogg") || Elementos[t].getName().contains(".wav") || Elementos[t].getName().contains(".flac")) {//Filtrando archivos a agregar
                     String nombre = Elementos[t].getName();
                     Enviar(nombre, Elementos[t]);
                 }
@@ -267,7 +274,7 @@ public class Tabla extends javax.swing.JFrame {
         int filas = getMiTabla().getRowCount();
         for (int h = 0; h < filas; h++) {
             if (rutaTabla.toString().equals(getMiTabla().getValueAt(h, 1).toString())) {
-                abc.Reproducir(h);
+                abc.metodos_internos.Reproducir(h);
                 getMiTabla().changeSelection(h, 1, false, false);
             }
         }

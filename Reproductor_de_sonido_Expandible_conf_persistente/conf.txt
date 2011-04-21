@@ -1,7 +1,7 @@
-#Sat Apr 16 23:14:13 COT 2011
+#Wed Apr 20 11:41:40 COT 2011
 volumen=8
 modo_oculto=false
 mute=false
 modo_presentacion=false
 ultima_direccion=F\:\\DESCARGAS_INTERNET
-ultima_lista=C\:\\Users\\JONATHAN\\Desktop\\lista.m3u
+ultima_lista=C\:\\Users\\JONATHAN\\Desktop\\archivo.rep
