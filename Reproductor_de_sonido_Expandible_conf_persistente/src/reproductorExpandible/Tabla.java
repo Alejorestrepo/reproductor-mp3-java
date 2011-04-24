@@ -68,6 +68,7 @@ public class Tabla extends javax.swing.JFrame{
 
                     } // end try
                     catch (Exception e) {
+                        e.printStackTrace();
                         JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }   // end for: through each dropped file
@@ -75,8 +76,12 @@ public class Tabla extends javax.swing.JFrame{
 
             private boolean Validaciones(File[] files, String[] extenciones) {
                 boolean estado = false;
-                for (int i = 0; i < extenciones.length; i++) {
-                    estado = estado || files[i].getName().contains(extenciones[i]);
+                for (int i = 0; i < files.length; i++) {
+                    for (int j = 0; j < extenciones.length; j++)//Comparador interno falto implementar
+                    {
+                        //corrige el bug que evitava agregar otro archivo q no sea mp3
+                        estado = estado || files[i].getName().contains(extenciones[j]);
+                    }
                 }
                 return estado;
             }
