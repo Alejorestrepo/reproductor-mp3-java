@@ -16,14 +16,16 @@ import reproductor.ReproductorExcepcion;
  *
  * @author JONATHAN
  */
-public class Tabla extends javax.swing.JFrame {
+public class Tabla extends javax.swing.JFrame{
+
     private static DefaultTableModel miModelo;
     public String[][] data = {};
     int Contador_de_celda = 0;
     public static int eliminados = 0;
     Object rutaTabla;
     static Direcciones Direccion;
-GUIReproductor abc;
+    GUIReproductor abc;
+
     static JTable getMiTabla() {
         return Tabla;
     }
@@ -37,7 +39,7 @@ GUIReproductor abc;
         initComponents();
         setLocation(400, 400);
         setSize(445, 180);
-        miModelo = new DefaultTableModel(data, new String[]{"Lista de Reproduccion", "Ruta"}) {
+        miModelo = new DefaultTableModel(data, new String[]{"Lista de Reproduccion", "Ruta"}){
 
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -45,9 +47,9 @@ GUIReproductor abc;
         };
         Tabla.setModel(miModelo);
         jScrollPane1.setViewportView(Tabla);
-        this.abc=abc;
+        this.abc = abc;
 
-        new Archivo_Jalar_Pegar(this, new Ejecutador() {
+        new Archivo_Jalar_Pegar(this, new Ejecutador(){
 
             public void filesDropped(File[] files) {
                 for (int i = 0; i < files.length; i++) {
@@ -80,7 +82,6 @@ GUIReproductor abc;
             }
         }); // end FileDrop.Listener
     }
-
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -171,7 +172,8 @@ GUIReproductor abc;
                     Enviar(name, actual);
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error Cargando Archivo!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -181,7 +183,8 @@ GUIReproductor abc;
         if (GUIReproductor.noreproducible) {
             try {
                 Libreria.loadFile(archivo.toString());
-            } catch (ReproductorExcepcion ex) {
+            }
+            catch (ReproductorExcepcion ex) {
                 BuscarIrreproducibles();
             }
         }
@@ -193,7 +196,8 @@ GUIReproductor abc;
                 getMiModelo().addRow(datos);
                 GUIReproductor.Habilitar(true);
             }
-        } else {
+        }
+        else {
             GUIReproductor.ldco.agrega(Direccion);
             Object[] datos = {Direccion.getNombre(), Direccion.getDireccion()};
             getMiModelo().addRow(datos);
@@ -206,7 +210,8 @@ GUIReproductor abc;
             String cadarchivo = getMiTabla().getValueAt(i, 1).toString();
             try {
                 Libreria.loadFile(cadarchivo);
-            } catch (ReproductorExcepcion ex) {
+            }
+            catch (ReproductorExcepcion ex) {
                 NodoDoble auxiliar = GUIReproductor.ldco.busca(new File(cadarchivo));
                 if (auxiliar != null) {
                     GUIReproductor.ldco.elimina(auxiliar);
@@ -238,7 +243,8 @@ GUIReproductor abc;
                     String nombre = Elementos[t].getName();
                     Enviar(nombre, Elementos[t]);
                 }
-            } else {
+            }
+            else {
                 llamar(Elementos[t]);
                 //System.out.println(Elementos[t].getName());
             }

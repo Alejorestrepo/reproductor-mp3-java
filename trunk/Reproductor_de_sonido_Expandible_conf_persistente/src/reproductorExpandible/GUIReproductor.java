@@ -19,12 +19,11 @@ public class GUIReproductor extends javax.swing.JFrame {
 //cargar archivo de configuracion
 
     Properties propiedades_conf = new Properties();
-    Info informata;
+    Info panel_info;
     Desktop elemento;
     private UIManager.LookAndFeelInfo apariencias[];
     static ListaDobleConOrden ldco = new ListaDobleConOrden();
     Equalizador equalizar;
-    static File tamañoarchivo;
     boolean estado = false, repetir = false, aleatorio = false, estado1 = false, listado = false, equalizador = false;
     static boolean duplicado = false;
     String nombre1;
@@ -837,8 +836,8 @@ public class GUIReproductor extends javax.swing.JFrame {
 
     private void BtnDetallesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnDetallesActionPerformed
         try {
-            informata = new Info(metodos_internos.atributos);
-            informata.show();
+            panel_info = new Info(metodos_internos.mpeg);
+            panel_info.show();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Reprodusca primero el archivo por favor", "Error de Usuario", JOptionPane.WARNING_MESSAGE);
         }
