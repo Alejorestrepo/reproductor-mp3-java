@@ -12,7 +12,7 @@ public class Busqueda extends javax.swing.JFrame {
     Direcciones Direccion;
     static Tabla tabla;
     DefaultListModel Elementos;
-    Object Nombre_item;
+    
     File Direccion_Archivo;
     Libreria metodos;
     Busqueda(ListaDobleConOrden ldco, Tabla tabla, Libreria metodos_internos) {
@@ -133,6 +133,7 @@ public class Busqueda extends javax.swing.JFrame {
     }//GEN-LAST:event_txtTextoKeyTyped
 
     private void ListaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListaMousePressed
+        Object Nombre_item;
         Nombre_item = Lista.getSelectedValue();
         //System.out.println(Nombre_item);
         Direccion_Archivo = Buscar_Direccion(Nombre_item);
