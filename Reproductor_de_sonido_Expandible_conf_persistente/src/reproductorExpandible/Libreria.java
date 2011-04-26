@@ -48,7 +48,7 @@ public class Libreria implements ReproductorLanzador{
     String canonicalPath;
     static Tabla tabla;
     private static Reproductor ReproductorBasico;
-    public int Contador_de_celda = 0, control1 = 0, veces = 0, tipo;
+    public int Contador_de_celda = 0, control1 = 0, veces = 0;
     public static int Pista = 0;
     static File tamañoarchivo;
     Long duration = null;
@@ -61,7 +61,6 @@ public class Libreria implements ReproductorLanzador{
     JCheckBoxMenuItem Modo_Presentacion;
     JPanel Panel_espectro;
     Equalizador equalizar;
-    Double bytesLength;
     public long secondsAmount = 0;
     boolean repetir;
     GUIReproductor abc;
@@ -77,9 +76,9 @@ public class Libreria implements ReproductorLanzador{
         Volumen = abc.Volumen;
         Modo_Presentacion = abc.Modo_Presentacion;
         Panel_espectro = abc.Panel_espectro;
-        equalizar = abc.equalizar;
         repetir = abc.repetir;
         tabla = new Tabla(abc);
+        equalizar = new Equalizador();
     }
 
     public String DevolverFormateado(int horas, int minutofinal, int segundofinal) {
@@ -259,19 +258,19 @@ public class Libreria implements ReproductorLanzador{
         try {
             if (direccion.contains(".mp3")) {
                 mpeg.load(new File(direccion));
-                TRANSFORMAR(mpeg, txtInformacion, Posicion, txtBit,nombre,constante);
+                TRANSFORMAR(mpeg, txtInformacion, Posicion, txtBit, nombre, constante);
             }
             else if (direccion.contains(".ogg")) {
                 ogg.load(new File(direccion));
-                TRANSFORMAR(ogg, txtInformacion, Posicion, txtBit,nombre,constante);
+                TRANSFORMAR(ogg, txtInformacion, Posicion, txtBit, nombre, constante);
             }
             else if (direccion.contains(".flac")) {
                 fla.load(new File(direccion));
-                TRANSFORMAR(fla, txtInformacion, Posicion, txtBit,nombre,constante);
+                TRANSFORMAR(fla, txtInformacion, Posicion, txtBit, nombre, constante);
             }
             else if (direccion.contains(".ape")) {
                 ape.load(new File(direccion));
-                TRANSFORMAR(ape, txtInformacion, Posicion, txtBit,nombre,constante);
+                TRANSFORMAR(ape, txtInformacion, Posicion, txtBit, nombre, constante);
             }
         }
         catch (IOException ex) {
@@ -470,9 +469,6 @@ public class Libreria implements ReproductorLanzador{
     }
 
     public void abierto(Map Infoaudio) {
-        if (Infoaudio.containsKey("audio.length.bytes")) {
-            bytesLength = Double.parseDouble(Infoaudio.get("audio.length.bytes").toString());
-        }
         audioInfo = Infoaudio;
         SpectrumTimeAnalyzer analizer = (SpectrumTimeAnalyzer) Panel_espectro;
         analizer.stopDSP();
@@ -544,46 +540,78 @@ public class Libreria implements ReproductorLanzador{
         }
     }
 
-    public void ProgresarBarra(File tamañoarchivo, int progreso, JSlider Progreso1) {
-        int tamano = (int) tamañoarchivo.length();
-        abc.Progreso_percent.setText(Progreso1.getValue() + "%");
-        try {
-            int valor1 = progreso * 100 / tamano;
-            Progreso1.setValue(valor1);
-        }
-        catch (Exception w) {
-        }
-        if (Progreso1.getValue() >= 99 && Modo_Presentacion.isSelected() == false) {
+    private void PROGRESARBARRA(long secondsAmount, long total) {
+        abc.Progreso_percent.setText(abc.Progreso1.getValue() + "%");
+        int posValue = ((int) Math.round(secondsAmount * abc.Progreso1.getMaximum() / total));
+        abc.Progreso1.setValue(posValue);
+
+        if (abc.Progreso1.getValue() >= 99 && Modo_Presentacion.isSelected() == false) {
             if (repetir && Pista == (tabla.getMiTabla().getRowCount() - 1)) {
                 Reproducir(0);
             }
             else {
                 SiguienteAnterior(1, control1);
             }
-            Progreso1.setValue(0);
+            abc.Progreso1.setValue(0);
         }
-        else if (Progreso1.getValue() >= 10 && Modo_Presentacion.isSelected()) {
+        else if (abc.Progreso1.getValue() >= 10 && Modo_Presentacion.isSelected()) {
             if (repetir && Pista == (tabla.getMiTabla().getRowCount() - 1)) {
                 Reproducir(0);
             }
             else {
                 SiguienteAnterior(1, control1);
             }
-            Progreso1.setValue(0);
+            abc.Progreso1.setValue(0);
         }
+    }
+
+    public long getLongitud_tiempo_estimado(Map properties) {
+        long milliseconds = -1;
+        int byteslength = -1;
+        if (properties != null) {
+            if (properties.containsKey("audio.length.bytes")) {
+                byteslength = ((Integer) properties.get("audio.length.bytes")).intValue();
+            }
+            if (properties.containsKey("duration")) {
+                milliseconds = (int) (((Long) properties.get("duration")).longValue()) / 1000;
+            }
+            else {
+                // Try to compute duration
+                int bitspersample = -1;
+                int channels = -1;
+                float samplerate = -1.0f;
+                int framesize = -1;
+                if (properties.containsKey("audio.samplesize.bits")) {
+                    bitspersample = ((Integer) properties.get("audio.samplesize.bits")).intValue();
+                }
+                if (properties.containsKey("audio.channels")) {
+                    channels = ((Integer) properties.get("audio.channels")).intValue();
+                }
+                if (properties.containsKey("audio.samplerate.hz")) {
+                    samplerate = ((Float) properties.get("audio.samplerate.hz")).floatValue();
+                }
+                if (properties.containsKey("audio.framesize.bytes")) {
+                    framesize = ((Integer) properties.get("audio.framesize.bytes")).intValue();
+                }
+                if (bitspersample > 0) {
+                    milliseconds = (int) (1000.0f * byteslength / (samplerate * channels * (bitspersample / 8)));
+                }
+                else {
+                    milliseconds = (int) (1000.0f * byteslength / (samplerate * framesize));
+                }
+            }
+        }
+        return milliseconds;
     }
 
     private void Procesar_Progreso(int bytes_leidos, long micro_segundos, byte[] pcmdata, Map propiedades) {
         SpectrumTimeAnalyzer analyzer = (SpectrumTimeAnalyzer) Panel_espectro;
         analyzer.writeDSP(pcmdata);
-        float progressUpdate = (float) (bytes_leidos * 1.0f / bytesLength * 1.0f);
-        int progressNow = (int) (bytesLength * progressUpdate);
-        ProgresarBarra(tamañoarchivo, progressNow, abc.Progreso1);
         int byteslength = -1;
         long total = -1;
+        // If it fails then try again with JavaSound SPI.
         if (total <= 0) {
-            total = (long) Math.round(duration / 1000);
-            //revisar ogg
+            total = (long) Math.round(getLongitud_tiempo_estimado(audioInfo) / 1000);
         }
         // If it fails again then it might be stream => Total = -1
         if (total <= 0) {
@@ -621,6 +649,9 @@ public class Libreria implements ReproductorLanzador{
         else {
             secondsAmount = (long) Math.round(micro_segundos / 1000000);
             equalizar.setBands(null);
+        }
+        if (total != 0) {
+            PROGRESARBARRA(secondsAmount, total);
         }
     }
 
@@ -668,7 +699,8 @@ public class Libreria implements ReproductorLanzador{
             }
         }
     }
-    private void TRANSFORMAR(MpegInfo mpeg, JTextField txtInformacion, JTextField Posicion, JTextField txtBit,String nombre,Double constante) {
+
+    private void TRANSFORMAR(MpegInfo mpeg, JTextField txtInformacion, JTextField Posicion, JTextField txtBit, String nombre, Double constante) {
         duration = mpeg.getMilisegundos();
         String formatohora = FormatoHoras(mpeg.getTiempo_en_segundos());
         txtInformacion.setText(nombre + "  " + "(" + formatohora + ")");
@@ -677,9 +709,9 @@ public class Libreria implements ReproductorLanzador{
         txtBit.setText(mpeg.getBitRate() / 1000 + " Kbps  " + mpeg.getSamplingRate() / 1000 + " KHZ");
     }
 
-    private void TRANSFORMAR(OggVorbisInfo ogg, JTextField txtInformacion, JTextField Posicion, JTextField txtBit,String nombre,Double constante) {
+    private void TRANSFORMAR(OggVorbisInfo ogg, JTextField txtInformacion, JTextField Posicion, JTextField txtBit, String nombre, Double constante) {
         duration = ogg.getMilisegundos();
-        System.out.println("mili "+ogg.getMilisegundos()+" seg "+ogg.getTiempo_en_segundos());
+        System.out.println("mili " + ogg.getMilisegundos() + " seg " + ogg.getTiempo_en_segundos());
         String formatohora = FormatoHoras(ogg.getTiempo_en_segundos());
         txtInformacion.setText(nombre + "  " + "(" + formatohora + ")");
         txtInformacion.setSize((int) (constante * txtInformacion.getText().length()), 20);//Longitud de ventana
@@ -687,7 +719,7 @@ public class Libreria implements ReproductorLanzador{
         txtBit.setText(ogg.getBitRate() / 1000 + " Kbps  " + ogg.getSamplingRate() / 1000 + " KHZ");
     }
 
-    private void TRANSFORMAR(FlacInfo fla, JTextField txtInformacion, JTextField Posicion, JTextField txtBit,String nombre,Double constante) {
+    private void TRANSFORMAR(FlacInfo fla, JTextField txtInformacion, JTextField Posicion, JTextField txtBit, String nombre, Double constante) {
         duration = fla.getMilisegundos();
         String formatohora = FormatoHoras(fla.getTiempo_en_segundos());
         txtInformacion.setText(nombre + "  " + "(" + formatohora + ")");
@@ -696,7 +728,7 @@ public class Libreria implements ReproductorLanzador{
         txtBit.setText(fla.getBitRate() / 1000 + " Kbps  " + fla.getSamplingRate() / 1000 + " KHZ");
     }
 
-    private void TRANSFORMAR(APEInfo ape, JTextField txtInformacion, JTextField Posicion, JTextField txtBit,String nombre,Double constante) {
+    private void TRANSFORMAR(APEInfo ape, JTextField txtInformacion, JTextField Posicion, JTextField txtBit, String nombre, Double constante) {
         duration = ape.getMilisegundos();
         String formatohora = FormatoHoras(ape.getTiempo_en_segundos());
         txtInformacion.setText(nombre + "  " + "(" + formatohora + ")");
