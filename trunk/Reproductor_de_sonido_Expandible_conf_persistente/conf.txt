@@ -1,7 +1,7 @@
-#Sat Apr 23 22:53:06 COT 2011
-volumen=26
+#Sun Apr 24 19:35:16 COT 2011
+volumen=10
 modo_oculto=false
-modo_presentacion=false
 mute=false
+modo_presentacion=false
 ultima_direccion=C\:\\Users\\JONATHAN\\Desktop
-ultima_lista=C\:\\Users\\JONATHAN\\Desktop\\ohg.m3u
+ultima_lista=C\:\\Users\\JONATHAN\\Desktop\\archivo.rep

@@ -8,7 +8,6 @@ import java.awt.event.*;
 import java.net.*;
 import javax.swing.*;
 import java.io.*;
-import java.util.Properties;
 import javazoom.jlgui.player.amp.visual.ui.SpectrumTimeAnalyzer;
 
 /**
@@ -17,13 +16,10 @@ import javazoom.jlgui.player.amp.visual.ui.SpectrumTimeAnalyzer;
  */
 public class GUIReproductor extends javax.swing.JFrame {
 //cargar archivo de configuracion
-
-    Properties propiedades_conf = new Properties();
     Info panel_info;
     Desktop elemento;
     private UIManager.LookAndFeelInfo apariencias[];
     static ListaDobleConOrden ldco = new ListaDobleConOrden();
-    Equalizador equalizar;
     boolean estado = false, repetir = false, aleatorio = false, estado1 = false, listado = false, equalizador = false;
     static boolean duplicado = false;
     String nombre1;
@@ -42,7 +38,6 @@ public class GUIReproductor extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "El sistema no soporta los procedimientos.", "Error", JOptionPane.ERROR_MESSAGE);
         }
         setVisible(true);
-        equalizar = new Equalizador();
         initComponents();
         metodos_internos = new Libreria(this);
         metodos_internos.Acceder_Conf();
@@ -793,9 +788,9 @@ public class GUIReproductor extends javax.swing.JFrame {
     private void btnEqualizadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEqualizadorActionPerformed
         equalizador = !equalizador;
         if (equalizador) {
-            equalizar.setVisible(true);
+            metodos_internos.equalizar.setVisible(true);
         } else {
-            equalizar.setVisible(false);
+            metodos_internos.equalizar.setVisible(false);
         }
     }//GEN-LAST:event_btnEqualizadorActionPerformed
 
