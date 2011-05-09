@@ -340,7 +340,6 @@ public class Libreria implements ReproductorLanzador{
             ModificarVolumen(Volumen);
             abc.SPEAKER.setIcon(new ImageIcon(getClass().getResource("/reproductordesonido/iconos/speaker2.png")));
             MOSTRARINFO(nombre1, file, abc.txtInformacion, abc.Posicion, abc.txtBit);
-
         }
         catch (ReproductorExcepcion e) {
             // TODO Auto-generated catch block

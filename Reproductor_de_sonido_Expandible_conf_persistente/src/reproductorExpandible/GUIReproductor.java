@@ -3,7 +3,14 @@ package reproductorExpandible;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import elementos_de_control.*;
-import java.awt.*;
+import java.awt.AWTException;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.HeadlessException;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.*;
 import java.net.*;
 import javax.swing.*;
@@ -14,8 +21,9 @@ import javazoom.jlgui.player.amp.visual.ui.SpectrumTimeAnalyzer;
  *
  * @author JONATHAN
  */
-public class GUIReproductor extends javax.swing.JFrame {
+public class GUIReproductor extends javax.swing.JFrame{
 //cargar archivo de configuracion
+
     Info panel_info;
     Desktop elemento;
     private UIManager.LookAndFeelInfo apariencias[];
@@ -44,7 +52,7 @@ public class GUIReproductor extends javax.swing.JFrame {
         metodos_internos.CARGAR_CONFIGURACIONES(Volumen, ultima_lista, ultima_direccion, estado1, Modo_Presentacion);
         setLocation(400, 200);
         apariencias = UIManager.getInstalledLookAndFeels();
-        this.addWindowListener(new WindowAdapter() {
+        this.addWindowListener(new WindowAdapter(){
 
             public void windowClosing(WindowEvent e) {
                 MinimizarAlReloj();
@@ -653,7 +661,7 @@ public class GUIReproductor extends javax.swing.JFrame {
 }//GEN-LAST:event_EliminarDuplicadoDespuesActionPerformed
 
     private void BuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuscarActionPerformed
-        Busqueda bcd = new Busqueda(ldco, metodos_internos.tabla,metodos_internos);
+        Busqueda bcd = new Busqueda(ldco, metodos_internos.tabla, metodos_internos);
         bcd.show();
 }//GEN-LAST:event_BuscarActionPerformed
 
@@ -741,7 +749,8 @@ public class GUIReproductor extends javax.swing.JFrame {
         estado = !estado;
         if (estado) {
             metodos_internos.pausar();
-        } else {
+        }
+        else {
             metodos_internos.resumir();
         }
 }//GEN-LAST:event_btnPausaActionPerformed
@@ -749,7 +758,8 @@ public class GUIReproductor extends javax.swing.JFrame {
     private void btnAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnteriorActionPerformed
         try {
             metodos_internos.SiguienteAnterior(0, control1);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             JOptionPane.showMessageDialog(this, "No encuentro pista", "Error de usuario", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnAnteriorActionPerformed
@@ -757,7 +767,8 @@ public class GUIReproductor extends javax.swing.JFrame {
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
         try {
             metodos_internos.SiguienteAnterior(1, control1);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             JOptionPane.showMessageDialog(this, "No encuentro pista", "Error de usuario", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnSiguienteActionPerformed
@@ -779,7 +790,8 @@ public class GUIReproductor extends javax.swing.JFrame {
         listado = !listado;
         if (listado) {
             metodos_internos.tabla.setVisible(true);
-        } else {
+        }
+        else {
             metodos_internos.tabla.setVisible(false);
         }
 
@@ -789,7 +801,8 @@ public class GUIReproductor extends javax.swing.JFrame {
         equalizador = !equalizador;
         if (equalizador) {
             metodos_internos.equalizar.setVisible(true);
-        } else {
+        }
+        else {
             metodos_internos.equalizar.setVisible(false);
         }
     }//GEN-LAST:event_btnEqualizadorActionPerformed
@@ -824,16 +837,33 @@ public class GUIReproductor extends javax.swing.JFrame {
         int desicion = JOptionPane.showOptionDialog(null, "Desea reproducirlo o agregarlo", "Elija", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
         if (desicion == 1) {
             //agregar
-        } else {
+        }
+        else {
             CARGAR_DIRECCION_INT(direccionS, direccion);
         }
     }//GEN-LAST:event_menuURLActionPerformed
 
     private void BtnDetallesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnDetallesActionPerformed
         try {
-            panel_info = new Info(metodos_internos.mpeg);
-            panel_info.show();
-        } catch (Exception e) {
+            String audioformato = (String) metodos_internos.audioInfo.get("audio.type");
+            if (audioformato.equalsIgnoreCase("mp3")) {
+                panel_info = new Info(metodos_internos.mpeg);
+                panel_info.show();
+            }
+            else if (audioformato.equalsIgnoreCase("ogg")) {
+                panel_info = new Info(metodos_internos.ogg);
+                panel_info.show();
+            }
+            else if (audioformato.equalsIgnoreCase("flac")) {
+                panel_info = new Info(metodos_internos.fla);
+                panel_info.show();
+            }
+            else if (audioformato.equalsIgnoreCase("ape")) {
+                panel_info = new Info(metodos_internos.ape);
+                panel_info.show();
+            }
+        }
+        catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Reprodusca primero el archivo por favor", "Error de Usuario", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_BtnDetallesActionPerformed
@@ -866,14 +896,17 @@ public class GUIReproductor extends javax.swing.JFrame {
             JOptionPane.showConfirmDialog(null, "De este modo se desactiva reproduccion un 10% del audio", "Aviso", JOptionPane.DEFAULT_OPTION);
             try {
                 metodos_internos.GUARDAR_ULTIMO_MODO(Modo_Presentacion.isSelected());
-            } catch (FileNotFoundException ex) {
+            }
+            catch (FileNotFoundException ex) {
                 Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (Modo_Presentacion.isSelected()) {
+        }
+        else if (Modo_Presentacion.isSelected()) {
             JOptionPane.showConfirmDialog(null, "De este modo solo reproducira un 10% del audio", "Aviso", JOptionPane.DEFAULT_OPTION);
             try {
                 metodos_internos.GUARDAR_ULTIMO_MODO(Modo_Presentacion.isSelected());
-            } catch (FileNotFoundException ex) {
+            }
+            catch (FileNotFoundException ex) {
                 Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -902,7 +935,7 @@ public class GUIReproductor extends javax.swing.JFrame {
         //System.out.println("Lado X " + evt.getWindow().getX());
     }//GEN-LAST:event_formWindowStateChanged
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new Runnable(){
 
             public void run() {
                 new GUIReproductor().setVisible(true);
@@ -986,7 +1019,7 @@ public class GUIReproductor extends javax.swing.JFrame {
             //que aparece al hacer click derecho sobre el icono
             //este listener se asociara con un item del menu contextual
             //que aparece al hacer click derecho sobre el icono
-            ActionListener escuchadorSalir = new ActionListener() {
+            ActionListener escuchadorSalir = new ActionListener(){
 
                 public void actionPerformed(ActionEvent e) {
                     //System.out.println("Saliendo...");
@@ -1019,70 +1052,73 @@ public class GUIReproductor extends javax.swing.JFrame {
             popup.add(mostrar);
             popup.add(salir);
 
-            Reproducir.addActionListener(new ActionListener() {
+            Reproducir.addActionListener(new ActionListener(){
 
                 public void actionPerformed(ActionEvent e) {
                     metodos_internos.SeleccionarArchivo();
                 }
             });
-            Pausar.addActionListener(new ActionListener() {
+            Pausar.addActionListener(new ActionListener(){
 
                 public void actionPerformed(ActionEvent e) {
                     estado = !estado;
                     if (estado) {
                         metodos_internos.pausar();
-                    } else {
+                    }
+                    else {
                         metodos_internos.resumir();
                     }
                 }
             });
-            Detener.addActionListener(new ActionListener() {
+            Detener.addActionListener(new ActionListener(){
 
                 public void actionPerformed(ActionEvent e) {
                     metodos_internos.parar();
                 }
             });
-            PistaAnterior.addActionListener(new ActionListener() {
+            PistaAnterior.addActionListener(new ActionListener(){
 
                 public void actionPerformed(ActionEvent e) {
                     try {
                         metodos_internos.SiguienteAnterior(0, control1);
-                    } catch (Exception et) {
+                    }
+                    catch (Exception et) {
                         JOptionPane.showMessageDialog(null, "No encuentro pista", "Error de usuario", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             });
-            PistaSiguiente.addActionListener(new ActionListener() {
+            PistaSiguiente.addActionListener(new ActionListener(){
 
                 public void actionPerformed(ActionEvent e) {
                     try {
                         metodos_internos.SiguienteAnterior(1, control1);
-                    } catch (Exception et) {
+                    }
+                    catch (Exception et) {
                         JOptionPane.showMessageDialog(null, "No encuentro pista", "Error de usuario", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             });
-            subirVolumen.addActionListener(new ActionListener() {
+            subirVolumen.addActionListener(new ActionListener(){
 
                 public void actionPerformed(ActionEvent e) {
                     Volumen.setValue(Volumen.getValue() + 10);
                     metodos_internos.ModificarVolumen(Volumen);
                 }
             });
-            bajarVolumen.addActionListener(new ActionListener() {
+            bajarVolumen.addActionListener(new ActionListener(){
 
                 public void actionPerformed(ActionEvent e) {
                     Volumen.setValue(Volumen.getValue() - 10);
                     metodos_internos.ModificarVolumen(Volumen);
                 }
             });
-            mostrar.addActionListener(new ActionListener() {
+            mostrar.addActionListener(new ActionListener(){
 
                 public void actionPerformed(ActionEvent e) {
                     setVisible(true);
                 }
             });
-            iconoSystemTray.addMouseListener(new MouseAdapter() {
+            iconoSystemTray.addMouseListener(new MouseAdapter(){
 
                 public void mouseReleased(MouseEvent e) {
                     if (e.isPopupTrigger()) {
@@ -1099,10 +1135,12 @@ public class GUIReproductor extends javax.swing.JFrame {
                     tray.add(iconoSystemTray);
                 }
 
-            } catch (AWTException e) {
+            }
+            catch (AWTException e) {
                 System.err.println("No es posible agregar el icono al System Tray");
             }
-        } else {
+        }
+        else {
             JOptionPane.showMessageDialog(null, "Tu sistema no soporta el System Tray :(", "Error Inesperado", JOptionPane.INFORMATION_MESSAGE);
         }
     }
@@ -1111,7 +1149,8 @@ public class GUIReproductor extends javax.swing.JFrame {
         try {
             UIManager.setLookAndFeel(apariencias[i].getClassName());
             SwingUtilities.updateComponentTreeUI(this);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Imposible modificar el tema visual", "Lookandfeel inválido.",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -1125,14 +1164,16 @@ public class GUIReproductor extends javax.swing.JFrame {
 
     public void Aparecer() {
         try {
-            elemento.browse(new URI("http://jonathan-palomino.blogspot.com/"));
-
-        } catch (URISyntaxException ex) {
-            JOptionPane.showMessageDialog(null, "Error de web");
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Error de IO");
+            try {
+                elemento.browse(new URI("http://jonathan-palomino.blogspot.com/"));
+            }
+            catch (IOException ex) {
+                Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-
+        catch (URISyntaxException ex) {
+            JOptionPane.showMessageDialog(null, "Error de web");
+        }
     }
 
     public void Contactar() {
@@ -1141,7 +1182,8 @@ public class GUIReproductor extends javax.swing.JFrame {
         String mail = "mailto:" + email;
         try {
             elemento.mail(new URI(mail));
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error inesperado", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
@@ -1151,7 +1193,8 @@ public class GUIReproductor extends javax.swing.JFrame {
     public void CARGAR_DIRECCION_INT(String direccionS, URL direccion) throws HeadlessException {
         try {
             direccion = new URL(direccionS);
-        } catch (MalformedURLException ex) {
+        }
+        catch (MalformedURLException ex) {
             JOptionPane.showMessageDialog(null, "Ingreso mal su URL");
         }
         metodos_internos.loadFile(direccion);
