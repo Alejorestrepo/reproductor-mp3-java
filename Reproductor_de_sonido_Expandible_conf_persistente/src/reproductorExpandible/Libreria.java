@@ -344,7 +344,7 @@ public class Libreria implements ReproductorLanzador{
         catch (ReproductorExcepcion e) {
             // TODO Auto-generated catch block
             //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error de Archivo! \nElija otro ", "Error Fatal", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error Archivo invalido! \nElija otro ", "Error Fatal", JOptionPane.ERROR_MESSAGE);
         }
     }
 
