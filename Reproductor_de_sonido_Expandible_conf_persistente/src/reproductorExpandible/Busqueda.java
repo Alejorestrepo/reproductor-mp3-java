@@ -10,13 +10,11 @@ public class Busqueda extends javax.swing.JFrame {
 
     static ListaDobleConOrden ldco;
     Direcciones Direccion;
-    static Tabla tabla;
     DefaultListModel Elementos;
-    
     File Direccion_Archivo;
     Libreria metodos;
-    Busqueda(ListaDobleConOrden ldco, Tabla tabla, Libreria metodos_internos) {
-        this.ldco = ldco;
+    Busqueda(ListaDobleConOrden ldco, Libreria metodos_internos) {
+        Busqueda.ldco = ldco;
         initComponents();
         setLocation(400, 400);
         setSize(445, 400);
@@ -24,7 +22,7 @@ public class Busqueda extends javax.swing.JFrame {
         setLocation(288, 219);
         Elementos = new DefaultListModel();
         Lista.setModel(Elementos);
-        this.tabla = tabla;
+
         metodos =metodos_internos;
     }
 
@@ -200,13 +198,13 @@ public class Busqueda extends javax.swing.JFrame {
     public void Reproduce(File Direccion_Archivo) {
         String ruta = Direccion_Archivo.toString();
         //System.out.println(Direccion_Archivo);
-        int filas = tabla.getMiTabla().getRowCount();
+        int filas = Libreria_Tabla.getMiTabla().getRowCount();
         for (int h = 0; h < filas; h++) {
-            if (ruta == tabla.getMiTabla().getValueAt(h, 1).toString()) {
+            if (ruta == Libreria_Tabla.getMiTabla().getValueAt(h, 1).toString()) {
                 Libreria.Pista = (h);//resuelto por que no enviaba el numero de pista
                 metodos.Reproducir(h);
                 System.out.println("Pista "+Libreria.Pista);
-                tabla.getMiTabla().changeSelection(h, 1, false, false);
+                Libreria_Tabla.getMiTabla().changeSelection(h, 1, false, false);
             }
         }
     }

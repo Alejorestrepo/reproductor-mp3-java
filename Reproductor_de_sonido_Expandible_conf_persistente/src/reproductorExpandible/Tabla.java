@@ -3,14 +3,10 @@ package reproductorExpandible;
 import elementos_de_control.Archivo_Jalar_Pegar;
 import elementos_de_control.Archivo_Jalar_Pegar.Ejecutador;
 import elementos_de_control.Direcciones;
-import elementos_de_control.NodoDoble;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import reproductor.ReproductorExcepcion;
 
 /**
  *
@@ -19,20 +15,12 @@ import reproductor.ReproductorExcepcion;
 public class Tabla extends javax.swing.JFrame{
 
     private static DefaultTableModel miModelo;
+
     public String[][] data = {};
     int Contador_de_celda = 0;
-    public static int eliminados = 0;
     Object rutaTabla;
-    static Direcciones Direccion;
     GUIReproductor abc;
-
-    static JTable getMiTabla() {
-        return Tabla;
-    }
-
-    public static DefaultTableModel getMiModelo() {
-        return miModelo;
-    }
+    public Libreria_Tabla objeto;
 
     /** Creates new form Tabla */
     public Tabla(GUIReproductor abc) {
@@ -48,7 +36,7 @@ public class Tabla extends javax.swing.JFrame{
         Tabla.setModel(miModelo);
         jScrollPane1.setViewportView(Tabla);
         this.abc = abc;
-
+        objeto = new Libreria_Tabla(Tabla, miModelo, abc);
         new Archivo_Jalar_Pegar(this, new Ejecutador(){
 
             public void filesDropped(File[] files) {
@@ -59,10 +47,10 @@ public class Tabla extends javax.swing.JFrame{
                             String[] extencion_archivo = {".mp3", ".wav", ".ogg", ".flac"};
                             String[] extencion_lista = {".rep", ".m3u"};
                             if (Validaciones(files, extencion_archivo)) {
-                                Enviar(files[i].getName(), new File(files[i].getPath()));
+                                objeto.Enviar(files[i].getName(), new File(files[i].getPath()));
                             }
                             else if (Validaciones(files, extencion_lista)) {
-                                Traer_Lista(files[i]);
+                                objeto.Traer_Lista(files[i]);
                             }
                         }
 
@@ -140,154 +128,21 @@ public class Tabla extends javax.swing.JFrame{
     }// </editor-fold>//GEN-END:initComponents
 
     private void TablaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TablaMousePressed
-        Contador_de_celda = getMiTabla().getSelectedRow();
+        Contador_de_celda = Libreria_Tabla.getMiTabla().getSelectedRow();
         //System.out.println("orden " + Contador_de_celda);//Indica el lugar de la fila seleccionada el Contador_de_celda
-        rutaTabla = getMiTabla().getValueAt(Contador_de_celda, 1);
+        rutaTabla = Libreria_Tabla.getMiTabla().getValueAt(Contador_de_celda, 1);
         //System.out.println("Ruta " + rutaTabla);//Nombre de la celda
         //String uno=getMiTabla().getColumnName(Contador_de_celda);//Entrega nombre d columna
         //System.out.println("aparecio "+uno);
         if (evt.getClickCount() == 2) {
             //System.out.println(evt.getClickCount() + " archivo " + rutaTabla + " ruta " + Contador_de_celda);
             Libreria.Pista = Contador_de_celda;
-            Reproduce(rutaTabla);
+            objeto.Reproduce(rutaTabla);
         }
 
 }//GEN-LAST:event_TablaMousePressed
-    public static void IngresaDatos(String nombre, File file) {
-        Direccion = new Direcciones();
-        Direccion.setDireccion(file);
-        Direccion.setNombre(nombre);
-    }
-
-    public static void Traer_Lista(File file) {
-        FileReader LeerArchivo = null;
-        BufferedReader Temporal_memoria = null;
-        try {
-            LeerArchivo = new FileReader(file);
-            Temporal_memoria = new BufferedReader(LeerArchivo);
-
-            // Lectura del fichero
-            String linea;
-            File actual;
-            while ((linea = Temporal_memoria.readLine()) != null) {
-                if (linea.contains("#EXT") == false)//Evita leer metadata de winamp
-                {
-                    actual = new File(linea);
-                    String name = actual.getName();
-                    Enviar(name, actual);
-                }
-            }
-        }
-        catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error Cargando Archivo!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    public static void Enviar(String nombre, File archivo) {
-        IngresaDatos(nombre, archivo);
-        if (GUIReproductor.noreproducible) {
-            try {
-                Libreria.loadFile(archivo.toString());
-            }
-            catch (ReproductorExcepcion ex) {
-                BuscarIrreproducibles();
-            }
-        }
-        if (GUIReproductor.duplicado) {
-            NodoDoble aux = GUIReproductor.ldco.busca(archivo);
-            if (aux == null) {
-                GUIReproductor.ldco.agrega(Direccion);
-                Object[] datos = {Direccion.getNombre(), Direccion.getDireccion()};
-                getMiModelo().addRow(datos);
-                GUIReproductor.Habilitar(true);
-            }
-        }
-        else {
-            GUIReproductor.ldco.agrega(Direccion);
-            Object[] datos = {Direccion.getNombre(), Direccion.getDireccion()};
-            getMiModelo().addRow(datos);
-            GUIReproductor.Habilitar(true);
-        }
-    }
-
-    public static void BuscarIrreproducibles() {
-        for (int i = 0; i < getMiTabla().getRowCount(); ++i) {
-            String cadarchivo = getMiTabla().getValueAt(i, 1).toString();
-            try {
-                Libreria.loadFile(cadarchivo);
-            }
-            catch (ReproductorExcepcion ex) {
-                NodoDoble auxiliar = GUIReproductor.ldco.busca(new File(cadarchivo));
-                if (auxiliar != null) {
-                    GUIReproductor.ldco.elimina(auxiliar);
-                    eliminados++;
-                }
-            }
-        }
-        ActualizaTabla();
-    }
-
-    public static void inicializaTabla() {
-        // obtiene numero de filas de la tabla
-        int filas = getMiTabla().getRowCount();
-        // remueve todas las filas de la tabla
-        for (int fila = 0; fila < filas; fila++) {
-            getMiModelo().removeRow(0);
-        }
-    }
-
-    public void LlenarTabla(File[] Elementos) {
-        GUIReproductor.EliminarElegido.setEnabled(true);
-        GUIReproductor.EliminarTodo.setEnabled(true);
-        GUIReproductor.GuardarLista.setEnabled(true);
-        int tamaño = Elementos.length;
-        for (int t = 0; t < tamaño; t++) {
-            if (Elementos[t].isFile())//Verificar que es un archivo y no una carpeta
-            {
-                if (Elementos[t].getName().contains(".mp3") || Elementos[t].getName().contains(".ogg") || Elementos[t].getName().contains(".wav") || Elementos[t].getName().contains(".flac")) {//Filtrando archivos a agregar
-                    String nombre = Elementos[t].getName();
-                    Enviar(nombre, Elementos[t]);
-                }
-            }
-            else {
-                llamar(Elementos[t]);
-                //System.out.println(Elementos[t].getName());
-            }
-
-        }
-    }
-
-    public File[] llamar(File Dir) {
-        File[] lista_Archivos = Dir.listFiles();
-        LlenarTabla(lista_Archivos);
-        return lista_Archivos;
-    }
-
-    public static void ActualizaTabla() {
-        inicializaTabla();
-        NodoDoble auxiliar;
-        auxiliar = GUIReproductor.ldco.getInicio();
-        while (auxiliar != null) {
-            Direcciones dir = auxiliar.getNodo();
-            Object[] datos = {dir.getNombre(), dir.getDireccion()};
-            getMiModelo().addRow(datos);
-            //retrocede al nodo anterior
-            auxiliar = auxiliar.getApuntSgte();
-        }
-
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JTable Tabla;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-
-    private void Reproduce(Object rutaTabla) {
-        int filas = getMiTabla().getRowCount();
-        for (int h = 0; h < filas; h++) {
-            if (rutaTabla.toString().equals(getMiTabla().getValueAt(h, 1).toString())) {
-                abc.metodos_internos.Reproducir(h);
-                getMiTabla().changeSelection(h, 1, false, false);
-            }
-        }
-    }
 }

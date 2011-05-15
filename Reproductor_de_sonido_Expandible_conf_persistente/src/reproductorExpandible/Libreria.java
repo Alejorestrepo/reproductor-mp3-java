@@ -181,7 +181,7 @@ public class Libreria implements ReproductorLanzador{
         if (resultado == JFileChooser.CANCEL_OPTION) {
             return;
         }
-        tabla.Traer_Lista(FileGuardar.getSelectedFile());
+        tabla.objeto.Traer_Lista(FileGuardar.getSelectedFile());
         try {
             GUARDAR_ULTIMA_LISTA(FileGuardar.getSelectedFile().getPath());
         }
@@ -196,44 +196,44 @@ public class Libreria implements ReproductorLanzador{
         {
             if (Pista == 0) {
                 Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
+                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
             }
             else {
-                Pista = (int) (Math.random() * (tabla.getMiTabla().getRowCount() - 1));
+                Pista = (int) (Math.random() * (Libreria_Tabla.getMiTabla().getRowCount() - 1));
                 Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
+                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
             }
         }
         if (valor == 0 && control == 0) /// 0 es anterior
         {
             if (Pista == 0) {
                 Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
+                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
             }
             else {
                 Pista = Pista - 1;
                 Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
+                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
             }
         }
         if (valor == 1 && control == 0) /// 1 es posterior
         {
-            if ((Pista + 1) == tabla.getMiTabla().getRowCount()) {
+            if ((Pista + 1) == Libreria_Tabla.getMiTabla().getRowCount()) {
                 //System.out.println("al inicio");
                 //manda el contador al inicio paran emular un regreso
                 Pista = 0;
                 Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
+                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
             }
             else {
                 try {
                     Pista = Pista + 1;
                     Reproducir(Pista);
-                    tabla.getMiTabla().changeSelection(Pista, 1, false, false);
+                    Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
                 }
                 catch (Exception e) {
                     Reproducir(Pista - 1);
-                    tabla.getMiTabla().changeSelection((Pista - 1), 1, false, false);
+                    Libreria_Tabla.getMiTabla().changeSelection((Pista - 1), 1, false, false);
                     Pista = Pista - 1;
                 }
             }
@@ -241,13 +241,13 @@ public class Libreria implements ReproductorLanzador{
         if (valor == 1 && control == 1) /// 1 es posterior
         {
             try {
-                Pista = (int) (Math.random() * (tabla.getMiTabla().getRowCount() - 1));
+                Pista = (int) (Math.random() * (Libreria_Tabla.getMiTabla().getRowCount() - 1));
                 Reproducir(Pista);
-                tabla.getMiTabla().changeSelection(Pista, 1, false, false);
+                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
             }
             catch (Exception e) {
                 Reproducir(Pista - 1);
-                tabla.getMiTabla().changeSelection((Pista - 1), 1, false, false);
+                Libreria_Tabla.getMiTabla().changeSelection((Pista - 1), 1, false, false);
                 Pista = Pista - 1;
             }
         }
@@ -305,7 +305,7 @@ public class Libreria implements ReproductorLanzador{
     }
 
     public void SeleccionarArchivo() {
-        if (tabla.getMiTabla().getRowCount() != 0) {
+        if (Libreria_Tabla.getMiTabla().getRowCount() != 0) {
             int Pista = tabla.Contador_de_celda;
             Reproducir(Pista);//Manda el numero de celda para que reprodusca
         }
@@ -314,26 +314,26 @@ public class Libreria implements ReproductorLanzador{
     public void BuscarDuplicaddos(ListaDobleConOrden ldco) {
         //Aqui mi algoritmo de buskeda de duplicados
         //no sera lo mejor en buskeda(eficiente) pero funka para el uso
-        for (int i = 0; i < tabla.getMiTabla().getRowCount(); i++) {
+        for (int i = 0; i < Libreria_Tabla.getMiTabla().getRowCount(); i++) {
             for (int j = 0; j < i; j++) {
-                if (tabla.getMiTabla().getValueAt(i, 1).toString().compareTo(tabla.getMiTabla().getValueAt(j, 1).toString()) == 0) {
+                if (Libreria_Tabla.getMiTabla().getValueAt(i, 1).toString().compareTo(Libreria_Tabla.getMiTabla().getValueAt(j, 1).toString()) == 0) {
                     //Eliminar
-                    NodoDoble auxiliar = ldco.busca(new File(tabla.getMiTabla().getValueAt(i, 1).toString()));
+                    NodoDoble auxiliar = ldco.busca(new File(Libreria_Tabla.getMiTabla().getValueAt(i, 1).toString()));
                     if (auxiliar != null) {
                         ldco.elimina(auxiliar);
                     }
                 }
             }
         }
-        tabla.ActualizaTabla();
+        Libreria_Tabla.ActualizaTabla();
     }
 
     public void Reproducir(int Pista) {
-        Object direccion = tabla.getMiTabla().getValueAt(Pista, 1);
+        Object direccion = Libreria_Tabla.getMiTabla().getValueAt(Pista, 1);
         // System.out.println("Pista "+direccion);//Nombre de la celda
         String file = direccion.toString();
         System.out.println("Pistf " + file);
-        String nombre1 = tabla.getMiTabla().getValueAt(Pista, 0).toString();
+        String nombre1 = Libreria_Tabla.getMiTabla().getValueAt(Pista, 0).toString();
         try {
             loadFile(file);
             reproducir();
@@ -374,7 +374,7 @@ public class Libreria implements ReproductorLanzador{
             else {
                 try {
                     GUARDAR_ULTIMA_DIRECCION(archivo.getSelectedFile().getParent());
-                    tabla.LlenarTabla(archivo.getSelectedFiles());
+                    tabla.objeto.LlenarTabla(archivo.getSelectedFiles());
                 }
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "Error Cargando Archivo", "Error", JOptionPane.ERROR_MESSAGE);
@@ -389,7 +389,7 @@ public class Libreria implements ReproductorLanzador{
             }
             try {
                 GUARDAR_ULTIMA_DIRECCION(archivo.getSelectedFile().getPath());
-                tabla.llamar(archivo.getSelectedFile());
+                tabla.objeto.llamar(archivo.getSelectedFile());
             }
             catch (ArrayIndexOutOfBoundsException e) {
                 //System.out.println(e);
@@ -545,7 +545,7 @@ public class Libreria implements ReproductorLanzador{
         abc.Progreso1.setValue(posValue);
 
         if (abc.Progreso1.getValue() >= 99 && Modo_Presentacion.isSelected() == false) {
-            if (repetir && Pista == (tabla.getMiTabla().getRowCount() - 1)) {
+            if (repetir && Pista == (Libreria_Tabla.getMiTabla().getRowCount() - 1)) {
                 Reproducir(0);
             }
             else {
@@ -554,7 +554,7 @@ public class Libreria implements ReproductorLanzador{
             abc.Progreso1.setValue(0);
         }
         else if (abc.Progreso1.getValue() >= 10 && Modo_Presentacion.isSelected()) {
-            if (repetir && Pista == (tabla.getMiTabla().getRowCount() - 1)) {
+            if (repetir && Pista == (Libreria_Tabla.getMiTabla().getRowCount() - 1)) {
                 Reproducir(0);
             }
             else {
@@ -704,7 +704,7 @@ public class Libreria implements ReproductorLanzador{
         String formatohora = FormatoHoras(mpeg.getTiempo_en_segundos());
         txtInformacion.setText(nombre + "  " + "(" + formatohora + ")");
         txtInformacion.setSize((int) (constante * txtInformacion.getText().length()), 20);//Longitud de ventana
-        Posicion.setText((Pista + 1) + " de " + tabla.getMiTabla().getRowCount());
+        Posicion.setText((Pista + 1) + " de " + Libreria_Tabla.getMiTabla().getRowCount());
         txtBit.setText(mpeg.getBitRate() / 1000 + " Kbps  " + mpeg.getSamplingRate() / 1000 + " KHZ");
     }
 
@@ -714,7 +714,7 @@ public class Libreria implements ReproductorLanzador{
         String formatohora = FormatoHoras(ogg.getTiempo_en_segundos());
         txtInformacion.setText(nombre + "  " + "(" + formatohora + ")");
         txtInformacion.setSize((int) (constante * txtInformacion.getText().length()), 20);//Longitud de ventana
-        Posicion.setText((Pista + 1) + " de " + tabla.getMiTabla().getRowCount());
+        Posicion.setText((Pista + 1) + " de " + Libreria_Tabla.getMiTabla().getRowCount());
         txtBit.setText(ogg.getBitRate() / 1000 + " Kbps  " + ogg.getSamplingRate() / 1000 + " KHZ");
     }
 
@@ -723,7 +723,7 @@ public class Libreria implements ReproductorLanzador{
         String formatohora = FormatoHoras(fla.getTiempo_en_segundos());
         txtInformacion.setText(nombre + "  " + "(" + formatohora + ")");
         txtInformacion.setSize((int) (constante * txtInformacion.getText().length()), 20);//Longitud de ventana
-        Posicion.setText((Pista + 1) + " de " + tabla.getMiTabla().getRowCount());
+        Posicion.setText((Pista + 1) + " de " + Libreria_Tabla.getMiTabla().getRowCount());
         txtBit.setText(fla.getBitRate() / 1000 + " Kbps  " + fla.getSamplingRate() / 1000 + " KHZ");
     }
 
@@ -732,7 +732,7 @@ public class Libreria implements ReproductorLanzador{
         String formatohora = FormatoHoras(ape.getTiempo_en_segundos());
         txtInformacion.setText(nombre + "  " + "(" + formatohora + ")");
         txtInformacion.setSize((int) (constante * txtInformacion.getText().length()), 20);//Longitud de ventana
-        Posicion.setText((Pista + 1) + " de " + tabla.getMiTabla().getRowCount());
+        Posicion.setText((Pista + 1) + " de " + Libreria_Tabla.getMiTabla().getRowCount());
         txtBit.setText(ape.getBitRate() / 1000 + " Kbps  " + ape.getSamplingRate() / 1000 + " KHZ");
     }
 }
