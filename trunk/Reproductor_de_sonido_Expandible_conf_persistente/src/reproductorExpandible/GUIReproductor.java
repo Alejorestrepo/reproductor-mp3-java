@@ -35,7 +35,6 @@ public class GUIReproductor extends javax.swing.JFrame{
     static boolean noreproducible = false;
     String ultima_direccion = "C:", ultima_lista = "C:";
     int valor_volumen = 50;
-    String canonicalPath;
     Libreria metodos_internos;
 
     /** Creates new form GUIReproductor */
@@ -661,22 +660,22 @@ public class GUIReproductor extends javax.swing.JFrame{
 }//GEN-LAST:event_EliminarDuplicadoDespuesActionPerformed
 
     private void BuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuscarActionPerformed
-        Busqueda bcd = new Busqueda(ldco, metodos_internos.tabla, metodos_internos);
+        Busqueda bcd = new Busqueda(ldco, metodos_internos);
         bcd.show();
 }//GEN-LAST:event_BuscarActionPerformed
 
     private void EliminarElegidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarElegidoActionPerformed
         //System.out.println(tabla.rutaTabla);
-        NodoDoble auxiliar = ldco.busca((File) metodos_internos.tabla.rutaTabla);
+        NodoDoble auxiliar = ldco.busca((File) Libreria.tabla.rutaTabla);
         if (auxiliar != null) {
             ldco.elimina(auxiliar);
-            metodos_internos.tabla.ActualizaTabla();
+            Libreria_Tabla.ActualizaTabla();
         }
 }//GEN-LAST:event_EliminarElegidoActionPerformed
 
     private void EliminarTodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarTodoActionPerformed
         ldco.setInicio(null);
-        metodos_internos.tabla.inicializaTabla();
+        Libreria_Tabla.inicializaTabla();
         Habilitar(false);
         metodos_internos.parar();
         Progreso1.setValue(0);
@@ -685,7 +684,7 @@ public class GUIReproductor extends javax.swing.JFrame{
 }//GEN-LAST:event_EliminarTodoActionPerformed
 
     private void CargarListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarListaActionPerformed
-        metodos_internos.CargarLista(ultima_lista, metodos_internos.tabla);
+        metodos_internos.CargarLista(ultima_lista, Libreria.tabla);
         Habilitar(true);
 }//GEN-LAST:event_CargarListaActionPerformed
 
@@ -789,10 +788,10 @@ public class GUIReproductor extends javax.swing.JFrame{
     private void btnListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListaActionPerformed
         listado = !listado;
         if (listado) {
-            metodos_internos.tabla.setVisible(true);
+            Libreria.tabla.setVisible(true);
         }
         else {
-            metodos_internos.tabla.setVisible(false);
+            Libreria.tabla.setVisible(false);
         }
 
     }//GEN-LAST:event_btnListaActionPerformed
@@ -881,13 +880,13 @@ public class GUIReproductor extends javax.swing.JFrame{
     }//GEN-LAST:event_EliminarIrreAutoActionPerformed
 
     private void EliminarIrreAhoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarIrreAhoraActionPerformed
-        Tabla.BuscarIrreproducibles();
+        Libreria_Tabla.BuscarIrreproducibles();
         EliminarIrreAuto.setSelected(true);
         noreproducible = true;
         EliminarIrreAhora.setSelected(false);
         PermitirIrre.setSelected(false);
-        JOptionPane.showMessageDialog(null, "Se eliminaron " + Tabla.eliminados + " elementos de la lista", "Advertencia", JOptionPane.INFORMATION_MESSAGE);
-        Tabla.eliminados = 0;
+        JOptionPane.showMessageDialog(null, "Se eliminaron " + Libreria_Tabla.eliminados + " elementos de la lista", "Advertencia", JOptionPane.INFORMATION_MESSAGE);
+        Libreria_Tabla.eliminados = 0;
     }//GEN-LAST:event_EliminarIrreAhoraActionPerformed
 
     private void Modo_PresentacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Modo_PresentacionActionPerformed
