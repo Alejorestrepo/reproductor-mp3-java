@@ -177,7 +177,7 @@ public class FlacInfo implements Informacion {
     }
 
     public double getTiempo_en_segundos() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return -1;
     }
 
 }
