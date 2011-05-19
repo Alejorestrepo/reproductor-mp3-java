@@ -56,6 +56,7 @@ public class Libreria implements ReproductorLanzador{
     public OggVorbisInfo ogg;
     public FlacInfo fla;
     public APEInfo ape;
+    public WavInfo wav;
     public Map audioInfo = null;
     JSlider Volumen;
     JCheckBoxMenuItem Modo_Presentacion;
@@ -71,6 +72,7 @@ public class Libreria implements ReproductorLanzador{
         ogg = new OggVorbisInfo();
         fla = new FlacInfo();
         ape = new APEInfo();
+        wav = new WavInfo();
         ReproductorBasico = new Reproductor();
         ReproductorBasico.addBasicPlayerListener(this);
         Volumen = abc.Volumen;
@@ -272,11 +274,16 @@ public class Libreria implements ReproductorLanzador{
                 ape.load(new File(direccion));
                 TRANSFORMAR(ape, txtInformacion, Posicion, txtBit, nombre, constante);
             }
+            else if (direccion.contains(".wav")) {
+                wav.load(new File(direccion));
+                TRANSFORMAR(wav, txtInformacion, Posicion, txtBit, nombre, constante);
+            }
         }
         catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Error de IO");
         }
         catch (UnsupportedAudioFileException ex) {
+            ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error archivo no soportado");
         }
     }
@@ -343,7 +350,7 @@ public class Libreria implements ReproductorLanzador{
         }
         catch (ReproductorExcepcion e) {
             // TODO Auto-generated catch block
-            //e.printStackTrace();
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error Archivo invalido! \nElija otro ", "Error Fatal", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -397,6 +404,17 @@ public class Libreria implements ReproductorLanzador{
             catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Error Cargando Carpeta", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+
+        public void Acceder_Conf() {
+        try {
+            canonicalPath = new File(".").getCanonicalPath() + "/conf.txt";
+            propiedades_conf.load(new FileInputStream(canonicalPath));
+        }
+        catch (IOException ex) {
+            Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("No existe fichero se creara uno");
         }
     }
 
@@ -454,17 +472,6 @@ public class Libreria implements ReproductorLanzador{
     public void GUARDAR_LLAVE(String llave, String Valor, Properties propiedades_conf, String canonicalPath) throws FileNotFoundException {
         propiedades_conf.setProperty(llave, Valor);
         propiedades_conf.save(new FileOutputStream(canonicalPath), null);
-    }
-
-    public void Acceder_Conf() {
-        try {
-            canonicalPath = new File(".").getCanonicalPath() + "/conf.txt";
-            propiedades_conf.load(new FileInputStream(canonicalPath));
-        }
-        catch (IOException ex) {
-            Logger.getLogger(GUIReproductor.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("No existe fichero se creara uno");
-        }
     }
 
     public void abierto(Map Infoaudio) {
@@ -734,5 +741,14 @@ public class Libreria implements ReproductorLanzador{
         txtInformacion.setSize((int) (constante * txtInformacion.getText().length()), 20);//Longitud de ventana
         Posicion.setText((Pista + 1) + " de " + Libreria_Tabla.getMiTabla().getRowCount());
         txtBit.setText(ape.getBitRate() / 1000 + " Kbps  " + ape.getSamplingRate() / 1000 + " KHZ");
+    }
+
+    private void TRANSFORMAR(WavInfo wav, JTextField txtInformacion, JTextField Posicion, JTextField txtBit, String nombre, double constante) {
+        duration = wav.getMilisegundos();
+        String formatohora = FormatoHoras(wav.getTiempo_en_segundos());
+        txtInformacion.setText(nombre + "  " + "(" + formatohora + ")");
+        txtInformacion.setSize((int) (constante * txtInformacion.getText().length()), 20);//Longitud de ventana
+        Posicion.setText((Pista + 1) + " de " + Libreria_Tabla.getMiTabla().getRowCount());
+        txtBit.setText(wav.getBitRate() / 1000 + " Kbps  " + wav.getSamplingRate() / 1000 + " KHZ");
     }
 }

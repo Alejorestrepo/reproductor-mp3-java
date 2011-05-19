@@ -4,12 +4,13 @@ import reproductorExpandible.tags.APEInfo;
 import reproductorExpandible.tags.FlacInfo;
 import reproductorExpandible.tags.MpegInfo;
 import reproductorExpandible.tags.OggVorbisInfo;
+import reproductorExpandible.tags.WavInfo;
 
 /**
  *
  * @author JONATHAN
  */
-public class Info extends javax.swing.JFrame {
+public class Info extends javax.swing.JFrame{
 
     /** Creates new form Info */
     Info(MpegInfo atributos) {
@@ -24,12 +25,22 @@ public class Info extends javax.swing.JFrame {
         MOSTRAR(atributos);
     }
 
-    Info(FlacInfo fla) {
-        
+    Info(FlacInfo atributos) {
+        setLocation(300, 400);
+        initComponents();
+        MOSTRAR(atributos);
     }
 
-    Info(APEInfo ape) {
+    Info(APEInfo atributos) {
+        setLocation(300, 400);
+        initComponents();
+        MOSTRAR(atributos);
+    }
 
+    public Info(WavInfo atributos) {
+        setLocation(300, 400);
+        initComponents();
+        MOSTRAR(atributos);
     }
 
     public void MOSTRAR(MpegInfo atributos) {
@@ -53,17 +64,18 @@ public class Info extends javax.swing.JFrame {
     private void MOSTRAR(OggVorbisInfo atributos) {
         txtTag.setText("Titulo = " + atributos.getTitulo() + "\n" + "Artista = " + atributos.getArtista() + "\n" + "Album = " + atributos.getAlbum() + "\n" + "Track = " + atributos.getTrack() + "\n" + "Año = " + atributos.getaño() + "\n" + "Genero = " + atributos.getGenero());
         txtField.setText("Peso : " + atributos.getSize() + " bytes" + "\n"
-                + "Promedio de Calidad : "+atributos.getAverageBitrate() + "\n"
-                + "Calidad Nominal : "+atributos.getBitRate() / 1000 + " kbps" + "\n"
-                + "Maxima Calidad : "+atributos.getMaxBitrate() + "\n"
+                + "Promedio de Calidad : " + atributos.getAverageBitrate() + "\n"
+                + "Calidad Nominal : " + atributos.getBitRate() / 1000 + " kbps" + "\n"
+                + "Maxima Calidad : " + atributos.getMaxBitrate() + "\n"
                 + "Minima Calidad : " + atributos.getMinBitrate() + "\n"
                 + "Canales : " + atributos.getCanales() + "\n"
                 + "Velocidad de muestreo : " + atributos.getSamplingRate() + "\n"
                 + "Número de Serie : " + atributos.getSerial() + "\n"
-                + "Version : " + atributos.getVersion()+ "\n"
+                + "Version : " + atributos.getVersion() + "\n"
                 + "Vendedor : " + atributos.getVendor());
         lblUrl.setText("Archivo /URL : " + atributos.getLocation().trim());
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -167,4 +179,29 @@ public class Info extends javax.swing.JFrame {
     public javax.swing.JTextArea txtTag;
     // End of variables declaration//GEN-END:variables
 
+    private void MOSTRAR(WavInfo atributos) {
+        txtTag.setText("Titulo = " + atributos.getTitulo() + "\n"
+                + "Artista = " + atributos.getArtista() + "\n"
+                + "Album = " + atributos.getAlbum() + "\n"
+                + "Track = " + atributos.getTrack() + "\n"
+                + "Año = " + atributos.getaño() + "\n"
+                + "Genero = " + atributos.getGenero());
+        txtField.setText("Peso : " + atributos.getTamaño() + " bytes" + "\n"
+                + " " + atributos.getLayer() + "\n"
+                + atributos.getBitRate() / 1000 + " kbps" + "\n"
+                + atributos.getSamplingRate() + " Hz " + atributos.getChannelsMode() + "\n"
+                + "VBR : " + atributos.getVBR() + "\n" + "CRCs : " + atributos.getCRC() + "\n"
+                + "Corporativo : " + atributos.getCopyright() + "\n"
+                + "Original : " + atributos.getOriginal() + "\n"
+                + "Enfasis : " + atributos.getEmphasis());
+        lblUrl.setText("Archivo /URL : " + atributos.getDireccion().trim());
+    }
+
+    private void MOSTRAR(FlacInfo atributos) {
+        
+    }
+
+    private void MOSTRAR(APEInfo atributos) {
+
+    }
 }

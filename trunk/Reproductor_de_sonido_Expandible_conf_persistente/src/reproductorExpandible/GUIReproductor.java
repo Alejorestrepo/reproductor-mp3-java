@@ -861,8 +861,13 @@ public class GUIReproductor extends javax.swing.JFrame{
                 panel_info = new Info(metodos_internos.ape);
                 panel_info.show();
             }
+            else if (audioformato.equalsIgnoreCase("wave")) {
+                panel_info = new Info(metodos_internos.wav);
+                panel_info.show();
+            }
         }
         catch (Exception e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Reprodusca primero el archivo por favor", "Error de Usuario", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_BtnDetallesActionPerformed

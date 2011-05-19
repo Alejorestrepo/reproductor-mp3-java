@@ -1,7 +1,7 @@
-#Sat May 14 21:12:09 COT 2011
-volumen=10
+#Thu May 19 15:56:47 COT 2011
+volumen=16
 modo_oculto=false
-modo_presentacion=false
 mute=false
+modo_presentacion=false
 ultima_direccion=D\:\\
-ultima_lista=C\:\\aaa.m3u
+ultima_lista=C\:\\f.m3u
