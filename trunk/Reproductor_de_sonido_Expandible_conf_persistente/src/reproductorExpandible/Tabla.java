@@ -43,7 +43,7 @@ public class Tabla extends javax.swing.JFrame{
                         if (files[i].isFile())//Verificar que es un archivo y no una carpeta
                         {
                             String[] extencion_lista = {".rep", ".m3u"};
-                            if (objeto.Validaciones(files, objeto.extencion_archivo)) {
+                            if (objeto.Validaciones(files, Libreria.exten)) {
                                 objeto.Enviar(files[i].getName(), new File(files[i].getPath()));
                             }
                             else if (objeto.Validaciones(files, extencion_lista)) {

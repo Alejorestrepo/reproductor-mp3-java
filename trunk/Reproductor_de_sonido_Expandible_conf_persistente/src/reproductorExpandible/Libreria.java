@@ -65,7 +65,8 @@ public class Libreria implements ReproductorLanzador{
     public long secondsAmount = 0;
     boolean repetir;
     GUIReproductor abc;
-    public String[] extencion_archivo;
+    public static String[] extencion_archivo;
+    public static String[] exten;
 
     public Libreria(GUIReproductor aThis) {
         abc = aThis;
@@ -82,7 +83,6 @@ public class Libreria implements ReproductorLanzador{
         repetir = abc.repetir;
         tabla = new Tabla(abc);
         equalizar = new Equalizador();
-        extencion_archivo = abc.extencion_archivo;
     }
 
     public String DevolverFormateado(int horas, int minutofinal, int segundofinal) {
@@ -359,8 +359,10 @@ public class Libreria implements ReproductorLanzador{
 
     private static String[] CONVERTIR(String[] extencion_archivo) {
         String ob[] = new String[extencion_archivo.length];
+        System.out.println(extencion_archivo.length);
         for (int i = 0; i < extencion_archivo.length; i++) {
             ob[i] = extencion_archivo[i].substring(1);
+             //System.out.println(ob[i]);
         }
         return ob;
     }
@@ -368,7 +370,7 @@ public class Libreria implements ReproductorLanzador{
     void GENERAR_FILTRO(JFileChooser archivo) {
         FileNameExtensionFilter[] filtro = new FileNameExtensionFilter[extencion_archivo.length];
         for (int i = 0; i < extencion_archivo.length; i++) {
-            filtro[i]= new FileNameExtensionFilter("Archivo "+extencion_archivo[i].substring(1).toUpperCase(), extencion_archivo[i].substring(1));
+            filtro[i] = new FileNameExtensionFilter("Archivo " + extencion_archivo[i].substring(1).toUpperCase(), extencion_archivo[i].substring(1));
             archivo.setFileFilter(filtro[i]);
         }
     }
@@ -392,9 +394,11 @@ public class Libreria implements ReproductorLanzador{
             else {
                 try {
                     GUARDAR_ULTIMA_DIRECCION(archivo.getSelectedFile().getParent());
+                    System.out.println(archivo.getSelectedFile());
                     tabla.objeto.LlenarTabla(archivo.getSelectedFiles());
                 }
                 catch (Exception e) {
+                    e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Error Cargando Archivo", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -435,10 +439,22 @@ public class Libreria implements ReproductorLanzador{
         VOLUMEN(Volumen);
         MUTE(estado);
         MODO_PRESENTACION(Modo_Presentacion);
+        EXTENCIONES();
+    }
+
+    public void EXTENCIONES() {
+        System.out.println(propiedades_conf.getProperty("extenciones"));
+        int longitud = propiedades_conf.getProperty("extenciones").split(",").length;
+        exten = new String[longitud];
+        exten = propiedades_conf.getProperty("extenciones").split(",");
+        for (int i = 0; i < longitud; i++) {
+            System.out.println(exten[i]);
+        }
+        extencion_archivo = exten;
     }
 
     private void ULTIMA_LISTA(String ultima_lista) {
-        ultima_lista = propiedades_conf.getProperty(ultima_lista);
+        ultima_lista = propiedades_conf.getProperty("ultima_lista");
     }
 
     public void ULTIMA_DIRECCION(String ultima_direccion) {
