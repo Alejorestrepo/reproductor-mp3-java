@@ -2,10 +2,8 @@ package reproductorExpandible;
 
 import elementos_de_control.Archivo_Jalar_Pegar;
 import elementos_de_control.Archivo_Jalar_Pegar.Ejecutador;
-import elementos_de_control.Direcciones;
 import java.io.File;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -44,12 +42,11 @@ public class Tabla extends javax.swing.JFrame{
                     try {
                         if (files[i].isFile())//Verificar que es un archivo y no una carpeta
                         {
-                            String[] extencion_archivo = {".mp3", ".wav", ".ogg", ".flac"};
                             String[] extencion_lista = {".rep", ".m3u"};
-                            if (Validaciones(files, extencion_archivo)) {
+                            if (objeto.Validaciones(files, objeto.extencion_archivo)) {
                                 objeto.Enviar(files[i].getName(), new File(files[i].getPath()));
                             }
-                            else if (Validaciones(files, extencion_lista)) {
+                            else if (objeto.Validaciones(files, extencion_lista)) {
                                 objeto.Traer_Lista(files[i]);
                             }
                         }
@@ -62,17 +59,6 @@ public class Tabla extends javax.swing.JFrame{
                 }   // end for: through each dropped file
             }   // end filesDropped
 
-            private boolean Validaciones(File[] files, String[] extenciones) {
-                boolean estado = false;
-                for (int i = 0; i < files.length; i++) {
-                    for (int j = 0; j < extenciones.length; j++)//Comparador interno falto implementar
-                    {
-                        //corrige el bug que evitava agregar otro archivo q no sea mp3
-                        estado = estado || files[i].getName().contains(extenciones[j]);
-                    }
-                }
-                return estado;
-            }
         }); // end FileDrop.Listener
     }
 
