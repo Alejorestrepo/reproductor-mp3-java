@@ -25,11 +25,13 @@ public class Libreria_Tabla{
     static Direcciones Direccion;
     public static int eliminados = 0;
     GUIReproductor abc;
+    public String[] extencion_archivo;
 
     Libreria_Tabla(JTable Tabla, DefaultTableModel miModelo, GUIReproductor abc) {
         Libreria_Tabla.Tabla = Tabla;
         Libreria_Tabla.miModelo = miModelo;
         this.abc = abc;
+        extencion_archivo=abc.extencion_archivo;
     }
 
     static JTable getMiTabla() {
@@ -94,9 +96,8 @@ public class Libreria_Tabla{
         for (int t = 0; t < tamaño; t++) {
             if (Elementos[t].isFile())//Verificar que es un archivo y no una carpeta
             {
-                if (Elementos[t].getName().contains(".mp3") || Elementos[t].getName().contains(".ogg") || Elementos[t].getName().contains(".wav") || Elementos[t].getName().contains(".flac")) {//Filtrando archivos a agregar
-                    String nombre = Elementos[t].getName();
-                    Enviar(nombre, Elementos[t]);
+                if (Validaciones(Elementos, extencion_archivo)) {
+                    Enviar(Elementos[t].getName(), Elementos[t]);
                 }
             }
             else {
@@ -105,6 +106,19 @@ public class Libreria_Tabla{
             }
 
         }
+    }
+
+    public boolean Validaciones(File[] files, String[] extenciones) {
+        boolean estado = false;
+
+        for (int i = 0; i < files.length; i++) {
+            for (int j = 0; j < extenciones.length; j++)//Comparador interno falto implementar
+            {
+                //corrige el bug que evitava agregar otro archivo q no sea mp3
+                estado = estado || files[i].getName().contains(extenciones[j]);
+            }
+        }
+        return estado;
     }
 
     public static void IngresaDatos(String nombre, File file) {

@@ -36,6 +36,7 @@ public class GUIReproductor extends javax.swing.JFrame{
     String ultima_direccion = "C:", ultima_lista = "C:";
     int valor_volumen = 50;
     Libreria metodos_internos;
+    public String[] extencion_archivo = {".mp3", ".wav", ".ogg", ".flac", ".au"};
 
     /** Creates new form GUIReproductor */
     public GUIReproductor() {

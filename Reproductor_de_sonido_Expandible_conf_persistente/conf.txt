@@ -1,7 +1,7 @@
-#Thu May 19 15:56:47 COT 2011
-volumen=16
+#Sat May 21 10:19:23 COT 2011
+volumen=17
 modo_oculto=false
-mute=false
 modo_presentacion=false
-ultima_direccion=D\:\\
+mute=false
+ultima_direccion=E\:\\MUSICAS\\MUSICAS ANDREA\\musica
 ultima_lista=C\:\\f.m3u

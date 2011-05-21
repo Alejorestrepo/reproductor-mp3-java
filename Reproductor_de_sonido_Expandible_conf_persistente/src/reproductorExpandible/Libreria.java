@@ -65,6 +65,7 @@ public class Libreria implements ReproductorLanzador{
     public long secondsAmount = 0;
     boolean repetir;
     GUIReproductor abc;
+    public String[] extencion_archivo;
 
     public Libreria(GUIReproductor aThis) {
         abc = aThis;
@@ -81,6 +82,7 @@ public class Libreria implements ReproductorLanzador{
         repetir = abc.repetir;
         tabla = new Tabla(abc);
         equalizar = new Equalizador();
+        extencion_archivo = abc.extencion_archivo;
     }
 
     public String DevolverFormateado(int horas, int minutofinal, int segundofinal) {
@@ -355,21 +357,30 @@ public class Libreria implements ReproductorLanzador{
         }
     }
 
+    private static String[] CONVERTIR(String[] extencion_archivo) {
+        String ob[] = new String[extencion_archivo.length];
+        for (int i = 0; i < extencion_archivo.length; i++) {
+            ob[i] = extencion_archivo[i].substring(1);
+        }
+        return ob;
+    }
+
+    void GENERAR_FILTRO(JFileChooser archivo) {
+        FileNameExtensionFilter[] filtro = new FileNameExtensionFilter[extencion_archivo.length];
+        for (int i = 0; i < extencion_archivo.length; i++) {
+            filtro[i]= new FileNameExtensionFilter("Archivo "+extencion_archivo[i].substring(1).toUpperCase(), extencion_archivo[i].substring(1));
+            archivo.setFileFilter(filtro[i]);
+        }
+    }
+
     public void ABRIR(String tipo, String ultima_direccion) {
         ULTIMA_DIRECCION(ultima_direccion);
         JFileChooser archivo = new JFileChooser(ultima_direccion);
         archivo.setMultiSelectionEnabled(true);
         //archivo.setDragEnabled(true);
         archivo.getDragEnabled();
-        FileNameExtensionFilter filtro_total = new FileNameExtensionFilter("Audio", "mp3", "wav", "ogg", "flac");
-        FileNameExtensionFilter filtro0 = new FileNameExtensionFilter("Archivos MP3", "mp3");
-        FileNameExtensionFilter filtro1 = new FileNameExtensionFilter("Archivos WAV", "wav");
-        FileNameExtensionFilter filtro2 = new FileNameExtensionFilter("Archivos OGG", "ogg");
-        FileNameExtensionFilter filtro3 = new FileNameExtensionFilter("Archivos FLAC", "flac");
-        archivo.setFileFilter(filtro0);
-        archivo.setFileFilter(filtro1);
-        archivo.setFileFilter(filtro2);
-        archivo.setFileFilter(filtro3);
+        FileNameExtensionFilter filtro_total = new FileNameExtensionFilter("Audio", CONVERTIR(extencion_archivo));
+        GENERAR_FILTRO(archivo);
         archivo.setFileFilter(filtro_total);
         if (tipo.equals("Archivos")) {
             archivo.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -407,7 +418,7 @@ public class Libreria implements ReproductorLanzador{
         }
     }
 
-        public void Acceder_Conf() {
+    public void Acceder_Conf() {
         try {
             canonicalPath = new File(".").getCanonicalPath() + "/conf.txt";
             propiedades_conf.load(new FileInputStream(canonicalPath));
