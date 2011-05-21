@@ -25,13 +25,10 @@ public class Libreria_Tabla{
     static Direcciones Direccion;
     public static int eliminados = 0;
     GUIReproductor abc;
-    public String[] extencion_archivo;
-
     Libreria_Tabla(JTable Tabla, DefaultTableModel miModelo, GUIReproductor abc) {
         Libreria_Tabla.Tabla = Tabla;
         Libreria_Tabla.miModelo = miModelo;
         this.abc = abc;
-        extencion_archivo=abc.extencion_archivo;
     }
 
     static JTable getMiTabla() {
@@ -96,7 +93,7 @@ public class Libreria_Tabla{
         for (int t = 0; t < tamaño; t++) {
             if (Elementos[t].isFile())//Verificar que es un archivo y no una carpeta
             {
-                if (Validaciones(Elementos, extencion_archivo)) {
+                if (Validaciones(Elementos, abc.metodos_internos.exten)) {
                     Enviar(Elementos[t].getName(), Elementos[t]);
                 }
             }
@@ -110,7 +107,6 @@ public class Libreria_Tabla{
 
     public boolean Validaciones(File[] files, String[] extenciones) {
         boolean estado = false;
-
         for (int i = 0; i < files.length; i++) {
             for (int j = 0; j < extenciones.length; j++)//Comparador interno falto implementar
             {
