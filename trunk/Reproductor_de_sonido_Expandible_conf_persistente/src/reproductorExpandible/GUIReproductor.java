@@ -28,7 +28,7 @@ public class GUIReproductor extends javax.swing.JFrame{
     Desktop elemento;
     private UIManager.LookAndFeelInfo apariencias[];
     static ListaDobleConOrden ldco = new ListaDobleConOrden();
-    boolean estado = false, repetir = false, aleatorio = false, estado1 = false, listado = false, equalizador = false;
+    boolean estado = false, repetir = false, aleatorio = false, estado1 = false, listado = false, equalizador = false,repetir_Cancion = false;
     static boolean duplicado = false;
     String nombre1;
     public int control1 = 0, veces = 0, tipo;
@@ -109,6 +109,7 @@ public class GUIReproductor extends javax.swing.JFrame{
         RepetirLista = new javax.swing.JRadioButtonMenuItem();
         NoRepetir = new javax.swing.JRadioButtonMenuItem();
         RepetirAleatorio = new javax.swing.JRadioButtonMenuItem();
+        MenuCancion = new javax.swing.JCheckBoxMenuItem();
         Modo_Presentacion = new javax.swing.JCheckBoxMenuItem();
         MenuAyuda = new javax.swing.JMenu();
         AcercaDE = new javax.swing.JMenuItem();
@@ -268,7 +269,7 @@ public class GUIReproductor extends javax.swing.JFrame{
             .addGap(0, 57, Short.MAX_VALUE)
         );
 
-        Progreso_percent.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        Progreso_percent.setFont(new java.awt.Font("Tahoma", 1, 14));
         Progreso_percent.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         Progreso_percent.setText("0%");
 
@@ -285,6 +286,11 @@ public class GUIReproductor extends javax.swing.JFrame{
 
         Menu_Carpeta.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.CTRL_MASK));
         Menu_Carpeta.setText("Añadir Carpeta");
+        Menu_Carpeta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Menu_CarpetaActionPerformed(evt);
+            }
+        });
         MenuPArchivo.add(Menu_Carpeta);
 
         menuURL.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.ALT_MASK));
@@ -318,8 +324,6 @@ public class GUIReproductor extends javax.swing.JFrame{
         jMenuBar1.add(MenuPArchivo);
 
         MenuLista.setText("Lista");
-
-        OpcionLista.setText("Opciones de Lista");
 
         PermitirDuplicado.setSelected(true);
         PermitirDuplicado.setText("Permitir Entradas duplicadas");
@@ -409,7 +413,6 @@ public class GUIReproductor extends javax.swing.JFrame{
         MenuLista.add(jSeparator1);
 
         CargarLista.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-        CargarLista.setText("Cargar Lista");
         CargarLista.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CargarListaActionPerformed(evt);
@@ -458,6 +461,15 @@ public class GUIReproductor extends javax.swing.JFrame{
             }
         });
         MenuOpciones.add(RepetirAleatorio);
+
+        MenuCancion.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, 0));
+        MenuCancion.setText("Repetir Cancion");
+        MenuCancion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuCancionActionPerformed(evt);
+            }
+        });
+        MenuOpciones.add(MenuCancion);
 
         Modo_Presentacion.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
         Modo_Presentacion.setText("Modo Presentacion");
@@ -774,7 +786,7 @@ public class GUIReproductor extends javax.swing.JFrame{
 
     private void SPEAKERActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SPEAKERActionPerformed
         estado1 = !estado1;
-        metodos_internos.BOTON_MUTE_N(estado, SPEAKER, Volumen);
+        metodos_internos.BOTON_MUTE_N(estado1, SPEAKER, Volumen);
     }//GEN-LAST:event_SPEAKERActionPerformed
 
     private void VolumenMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_VolumenMouseDragged
@@ -938,6 +950,10 @@ public class GUIReproductor extends javax.swing.JFrame{
         evt.getWindow().getX();
         //System.out.println("Lado X " + evt.getWindow().getX());
     }//GEN-LAST:event_formWindowStateChanged
+
+    private void MenuCancionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuCancionActionPerformed
+        repetir_Cancion = !repetir_Cancion;
+    }//GEN-LAST:event_MenuCancionActionPerformed
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable(){
 
@@ -961,6 +977,7 @@ public class GUIReproductor extends javax.swing.JFrame{
     public static javax.swing.JMenuItem GuardarLista;
     private javax.swing.JMenuItem MenuArchivo;
     private javax.swing.JMenu MenuAyuda;
+    private javax.swing.JCheckBoxMenuItem MenuCancion;
     private javax.swing.JMenu MenuLista;
     private javax.swing.JMenuItem MenuOcultar;
     private javax.swing.JMenu MenuOpciones;
