@@ -1,8 +1,8 @@
-#Sat May 21 11:47:01 COT 2011
+#Wed Jun 08 01:55:51 COT 2011
 extenciones=.mp3,.wav,.ogg,.flac,.au
-volumen=17
+volumen=8
 modo_oculto=false
-mute=false
 modo_presentacion=false
-ultima_direccion=D\:\\
+mute=false
+ultima_direccion=E\:\\MUSICAS\\GIAN MARCO
 ultima_lista=C\:\\f.m3u

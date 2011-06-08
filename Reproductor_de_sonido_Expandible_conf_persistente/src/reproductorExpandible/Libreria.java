@@ -196,65 +196,84 @@ public class Libreria implements ReproductorLanzador{
 
     public void SiguienteAnterior(int valor, int control) {
         //control ==1 es para aleatorio
-        if (valor == 0 && control == 1) /// 0 es anterior
-        {
-            if (Pista == 0) {
-                Reproducir(Pista);
-                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-            }
-            else {
-                Pista = (int) (Math.random() * (Libreria_Tabla.getMiTabla().getRowCount() - 1));
-                Reproducir(Pista);
-                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-            }
+        if (abc.repetir_Cancion) {
+            REP_pista(Pista);
         }
-        if (valor == 0 && control == 0) /// 0 es anterior
-        {
-            if (Pista == 0) {
-                Reproducir(Pista);
-                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-            }
-            else {
-                Pista = Pista - 1;
-                Reproducir(Pista);
-                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-            }
-        }
-        if (valor == 1 && control == 0) /// 1 es posterior
-        {
-            if ((Pista + 1) == Libreria_Tabla.getMiTabla().getRowCount()) {
-                //System.out.println("al inicio");
-                //manda el contador al inicio paran emular un regreso
-                Pista = 0;
-                Reproducir(Pista);
-                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
-            }
-            else {
-                try {
-                    Pista = Pista + 1;
-                    Reproducir(Pista);
-                    Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
+        else {
+            if (IsSiguiente(valor)) {
+                if (IsAleatorio(control)) {
+                    if (Pista == 0) {
+                        REP_pista(Pista);
+                    }
+                    else {
+                        Pista = (int) (Math.random() * (Libreria_Tabla.getMiTabla().getRowCount() - 1));
+                        REP_pista(Pista);
+                    }
                 }
-                catch (Exception e) {
-                    Reproducir(Pista - 1);
-                    Libreria_Tabla.getMiTabla().changeSelection((Pista - 1), 1, false, false);
-                    Pista = Pista - 1;
+                else {
+                    if (Pista == 0) {
+                        REP_pista(Pista);
+                    }
+                    else {
+                        Pista = Pista - 1;
+                        REP_pista(Pista);
+                    }
                 }
             }
-        }
-        if (valor == 1 && control == 1) /// 1 es posterior
-        {
-            try {
-                Pista = (int) (Math.random() * (Libreria_Tabla.getMiTabla().getRowCount() - 1));
-                Reproducir(Pista);
-                Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
+            else {
+                if (IsAleatorio(control)) {
+                    if ((Pista + 1) == Libreria_Tabla.getMiTabla().getRowCount()) {
+                        //System.out.println("al inicio");
+                        //manda el contador al inicio paran emular un regreso
+                        Pista = 0;
+                        REP_pista(Pista);
+                    }
+                    else {
+                        try {
+                            Pista = Pista + 1;
+                            REP_pista(Pista);
+                        }
+                        catch (Exception e) {
+                            Reproducir(Pista - 1);
+                            Libreria_Tabla.getMiTabla().changeSelection((Pista - 1), 1, false, false);
+                            Pista = Pista - 1;
+                        }
+                    }
+                }
+                else {
+                    try {
+                        Pista = (int) (Math.random() * (Libreria_Tabla.getMiTabla().getRowCount() - 1));
+                        REP_pista(Pista);
+                    }
+                    catch (Exception e) {
+                        Reproducir(Pista - 1);
+                        Libreria_Tabla.getMiTabla().changeSelection((Pista - 1), 1, false, false);
+                        Pista = Pista - 1;
+                    }
+                }
             }
-            catch (Exception e) {
-                Reproducir(Pista - 1);
-                Libreria_Tabla.getMiTabla().changeSelection((Pista - 1), 1, false, false);
-                Pista = Pista - 1;
-            }
         }
+    }
+
+    public void REP_pista(int Pista) {
+        Reproducir(Pista);
+        Libreria_Tabla.getMiTabla().changeSelection(Pista, 1, false, false);
+    }
+
+    private boolean IsSiguiente(int valor) {
+        boolean sig = false;
+        if (valor == 0) {
+            sig = true;
+        }
+        return sig;
+    }
+
+    private boolean IsAleatorio(int control) {
+        boolean alea = false;
+        if (control == 0) {
+            alea = true;
+        }
+        return alea;
     }
 
     public void MOSTRARINFO(String nombre, String direccion, JTextField txtInformacion, JTextField Posicion, JTextField txtBit) {
@@ -362,7 +381,7 @@ public class Libreria implements ReproductorLanzador{
         System.out.println(extencion_archivo.length);
         for (int i = 0; i < extencion_archivo.length; i++) {
             ob[i] = extencion_archivo[i].substring(1);
-             //System.out.println(ob[i]);
+            //System.out.println(ob[i]);
         }
         return ob;
     }
