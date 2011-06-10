@@ -2,8 +2,13 @@ package reproductorExpandible;
 
 import elementos_de_control.Archivo_Jalar_Pegar;
 import elementos_de_control.Archivo_Jalar_Pegar.Ejecutador;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -13,7 +18,6 @@ import javax.swing.table.DefaultTableModel;
 public class Tabla extends javax.swing.JFrame{
 
     private static DefaultTableModel miModelo;
-
     public String[][] data = {};
     int Contador_de_celda = 0;
     Object rutaTabla;
@@ -35,6 +39,7 @@ public class Tabla extends javax.swing.JFrame{
         jScrollPane1.setViewportView(Tabla);
         this.abc = abc;
         objeto = new Libreria_Tabla(Tabla, miModelo, abc);
+        //Crear_Submenus();
         new Archivo_Jalar_Pegar(this, new Ejecutador(){
 
             public void filesDropped(File[] files) {
@@ -58,7 +63,6 @@ public class Tabla extends javax.swing.JFrame{
                     }
                 }   // end for: through each dropped file
             }   // end filesDropped
-
         }); // end FileDrop.Listener
     }
 
@@ -71,8 +75,36 @@ public class Tabla extends javax.swing.JFrame{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        Menu_Opciones = new javax.swing.JPopupMenu();
+        Repro = new javax.swing.JMenuItem();
+        Informacion = new javax.swing.JMenuItem();
+        Eliminar = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         Tabla = new javax.swing.JTable();
+
+        Repro.setText("Reproducir");
+        Repro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ReproActionPerformed(evt);
+            }
+        });
+        Menu_Opciones.add(Repro);
+
+        Informacion.setText("Informacion");
+        Informacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InformacionActionPerformed(evt);
+            }
+        });
+        Menu_Opciones.add(Informacion);
+
+        Eliminar.setText("Eliminar");
+        Eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EliminarActionPerformed(evt);
+            }
+        });
+        Menu_Opciones.add(Eliminar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -87,6 +119,7 @@ public class Tabla extends javax.swing.JFrame{
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        Tabla.setComponentPopupMenu(Menu_Opciones);
         Tabla.setDragEnabled(true);
         Tabla.setDropMode(javax.swing.DropMode.ON_OR_INSERT_ROWS);
         Tabla.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -125,9 +158,25 @@ public class Tabla extends javax.swing.JFrame{
             Libreria.Pista = Contador_de_celda;
             objeto.Reproduce(rutaTabla);
         }
-
 }//GEN-LAST:event_TablaMousePressed
+
+    private void ReproActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReproActionPerformed
+        objeto.Reproduce(rutaTabla);
+    }//GEN-LAST:event_ReproActionPerformed
+
+    private void InformacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InformacionActionPerformed
+       abc.Mostrar_info();
+    }//GEN-LAST:event_InformacionActionPerformed
+
+    private void EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarActionPerformed
+       abc.Eliminar_Item();
+    }//GEN-LAST:event_EliminarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem Eliminar;
+    private javax.swing.JMenuItem Informacion;
+    private javax.swing.JPopupMenu Menu_Opciones;
+    private javax.swing.JMenuItem Repro;
     private static javax.swing.JTable Tabla;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
