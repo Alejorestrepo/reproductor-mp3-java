@@ -59,6 +59,45 @@ public class GUIReproductor extends javax.swing.JFrame{
         });
     }
 
+    public void Eliminar_Item() {
+        //System.out.println(tabla.rutaTabla);
+        NodoDoble auxiliar = ldco.busca((File) Libreria.tabla.rutaTabla);
+        if (auxiliar != null) {
+            ldco.elimina(auxiliar);
+            Libreria_Tabla.ActualizaTabla();
+        }
+    }
+
+    public void Mostrar_info() {
+        try {
+            String audioformato = (String) metodos_internos.audioInfo.get("audio.type");
+            if (audioformato.equalsIgnoreCase("mp3")) {
+                panel_info = new Info(metodos_internos.mpeg);
+                JOptionPane.showMessageDialog(this, panel_info, "Informacion de Archivo", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else if (audioformato.equalsIgnoreCase("ogg")) {
+                panel_info = new Info(metodos_internos.ogg);
+                JOptionPane.showMessageDialog(this, panel_info, "Informacion de Archivo", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else if (audioformato.equalsIgnoreCase("flac")) {
+                panel_info = new Info(metodos_internos.fla);
+                JOptionPane.showMessageDialog(this, panel_info, "Informacion de Archivo", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else if (audioformato.equalsIgnoreCase("ape")) {
+                panel_info = new Info(metodos_internos.ape);
+                JOptionPane.showMessageDialog(this, panel_info, "Informacion de Archivo", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else if (audioformato.equalsIgnoreCase("wave")) {
+                panel_info = new Info(metodos_internos.wav);
+                JOptionPane.showMessageDialog(this, panel_info, "Informacion de Archivo", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Reprodusca primero el archivo por favor", "Error de Usuario", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -325,6 +364,8 @@ public class GUIReproductor extends javax.swing.JFrame{
 
         MenuLista.setText("Lista");
 
+        OpcionLista.setText("Opciones");
+
         PermitirDuplicado.setSelected(true);
         PermitirDuplicado.setText("Permitir Entradas duplicadas");
         PermitirDuplicado.addActionListener(new java.awt.event.ActionListener() {
@@ -403,7 +444,6 @@ public class GUIReproductor extends javax.swing.JFrame{
 
         EliminarTodo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, java.awt.event.InputEvent.CTRL_MASK));
         EliminarTodo.setText("Eliminar todo");
-        EliminarTodo.setEnabled(false);
         EliminarTodo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 EliminarTodoActionPerformed(evt);
@@ -413,6 +453,7 @@ public class GUIReproductor extends javax.swing.JFrame{
         MenuLista.add(jSeparator1);
 
         CargarLista.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        CargarLista.setText("Cargar Lista");
         CargarLista.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CargarListaActionPerformed(evt);
@@ -677,12 +718,7 @@ public class GUIReproductor extends javax.swing.JFrame{
 }//GEN-LAST:event_BuscarActionPerformed
 
     private void EliminarElegidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarElegidoActionPerformed
-        //System.out.println(tabla.rutaTabla);
-        NodoDoble auxiliar = ldco.busca((File) Libreria.tabla.rutaTabla);
-        if (auxiliar != null) {
-            ldco.elimina(auxiliar);
-            Libreria_Tabla.ActualizaTabla();
-        }
+        Eliminar_Item();
 }//GEN-LAST:event_EliminarElegidoActionPerformed
 
     private void EliminarTodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarTodoActionPerformed
@@ -855,33 +891,7 @@ public class GUIReproductor extends javax.swing.JFrame{
     }//GEN-LAST:event_menuURLActionPerformed
 
     private void BtnDetallesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnDetallesActionPerformed
-        try {
-            String audioformato = (String) metodos_internos.audioInfo.get("audio.type");
-            if (audioformato.equalsIgnoreCase("mp3")) {
-                panel_info = new Info(metodos_internos.mpeg);
-                panel_info.show();
-            }
-            else if (audioformato.equalsIgnoreCase("ogg")) {
-                panel_info = new Info(metodos_internos.ogg);
-                panel_info.show();
-            }
-            else if (audioformato.equalsIgnoreCase("flac")) {
-                panel_info = new Info(metodos_internos.fla);
-                panel_info.show();
-            }
-            else if (audioformato.equalsIgnoreCase("ape")) {
-                panel_info = new Info(metodos_internos.ape);
-                panel_info.show();
-            }
-            else if (audioformato.equalsIgnoreCase("wave")) {
-                panel_info = new Info(metodos_internos.wav);
-                panel_info.show();
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Reprodusca primero el archivo por favor", "Error de Usuario", JOptionPane.WARNING_MESSAGE);
-        }
+        Mostrar_info();
     }//GEN-LAST:event_BtnDetallesActionPerformed
 
     private void PermitirIrreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PermitirIrreActionPerformed
