@@ -1,8 +1,8 @@
-#Fri Jun 10 15:39:28 COT 2011
+#Wed Jun 15 13:16:00 COT 2011
 extenciones=.mp3,.wav,.ogg,.flac,.au
-volumen=55
+volumen=60
 modo_oculto=false
-mute=false
 modo_presentacion=false
-ultima_direccion=E\:\\MUSICAS\\GIAN MARCO
-ultima_lista=C\:\\hhh.m3u
+mute=false
+ultima_direccion=E\:\\MUSICAS\\MUSICAS ANDREA\\musica
+ultima_lista=C\:\\Users\\JONATHAN\\Desktop\\Desktop.m3u

@@ -10,6 +10,9 @@
       <SubComponents>
         <MenuItem class="javax.swing.JMenuItem" name="Repro">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/reproductordesonido/iconos/3.JPG"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Reproducir"/>
           </Properties>
           <Events>

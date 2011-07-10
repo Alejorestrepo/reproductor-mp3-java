@@ -93,7 +93,7 @@ public class Libreria_Tabla{
         for (int t = 0; t < tamaño; t++) {
             if (Elementos[t].isFile())//Verificar que es un archivo y no una carpeta
             {
-                if (Validaciones(Elementos, abc.metodos_internos.exten)) {
+                if (Validaciones(Elementos[t], Libreria.extencion_archivo)) {
                     Enviar(Elementos[t].getName(), Elementos[t]);
                 }
             }
@@ -104,19 +104,24 @@ public class Libreria_Tabla{
 
         }
     }
-
-    public boolean Validaciones(File[] files, String[] extenciones) {
+    public static boolean Validaciones(File files, String[] extenciones) {
         boolean estado = false;
-        for (int i = 0; i < files.length; i++) {
             for (int j = 0; j < extenciones.length; j++)//Comparador interno falto implementar
             {
                 //corrige el bug que evitava agregar otro archivo q no sea mp3
-                estado = estado || files[i].getName().contains(extenciones[j]);
+                estado = estado || files.getName().contains(extenciones[j]);
             }
-        }
+         return estado;
+    }
+    public static boolean Validaciones(String files, String[] extenciones) {
+        boolean estado = false;
+            for (int j = 0; j < extenciones.length; j++)//Comparador interno falto implementar
+            {
+                //corrige el bug que evitava agregar otro archivo q no sea mp3
+                estado = estado || files.contains(extenciones[j]);
+            }
         return estado;
     }
-
     public static void IngresaDatos(String nombre, File file) {
         Direccion = new Direcciones();
         Direccion.setDireccion(file);
@@ -129,16 +134,12 @@ public class Libreria_Tabla{
         try {
             LeerArchivo = new FileReader(file);
             Temporal_memoria = new BufferedReader(LeerArchivo);
-
             // Lectura del fichero
             String linea;
-            File actual;
             while ((linea = Temporal_memoria.readLine()) != null) {
-                if (linea.contains("#EXT") == false)//Evita leer metadata de winamp
+                if (linea.contains("#EXT") == false && Validaciones(linea,Libreria.extencion_archivo))//Evita leer metadata de winamp
                 {
-                    actual = new File(linea);
-                    String name = actual.getName();
-                    Enviar(name, actual);
+                    Enviar(new File(linea).getName(), new File(linea));
                 }
             }
         }
