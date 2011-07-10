@@ -48,7 +48,7 @@ public class GUIReproductor extends javax.swing.JFrame{
         initComponents();
         metodos_internos = new Libreria(this);
         metodos_internos.Acceder_Conf();
-        metodos_internos.CARGAR_CONFIGURACIONES(Volumen, ultima_lista, ultima_direccion, estado1, Modo_Presentacion);
+        metodos_internos.CARGAR_CONFIGURACIONES();
         setLocation(400, 200);
         apariencias = UIManager.getInstalledLookAndFeels();
         this.addWindowListener(new WindowAdapter(){

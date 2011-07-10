@@ -2,13 +2,8 @@ package reproductorExpandible;
 
 import elementos_de_control.Archivo_Jalar_Pegar;
 import elementos_de_control.Archivo_Jalar_Pegar.Ejecutador;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.io.File;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -48,10 +43,10 @@ public class Tabla extends javax.swing.JFrame{
                         if (files[i].isFile())//Verificar que es un archivo y no una carpeta
                         {
                             String[] extencion_lista = {".rep", ".m3u"};
-                            if (objeto.Validaciones(files, Libreria.exten)) {
+                            if (objeto.Validaciones(files[i], Libreria.extencion_archivo)) {
                                 objeto.Enviar(files[i].getName(), new File(files[i].getPath()));
                             }
-                            else if (objeto.Validaciones(files, extencion_lista)) {
+                            else if (objeto.Validaciones(files[i], extencion_lista)) {
                                 objeto.Traer_Lista(files[i]);
                             }
                         }
@@ -82,6 +77,7 @@ public class Tabla extends javax.swing.JFrame{
         jScrollPane1 = new javax.swing.JScrollPane();
         Tabla = new javax.swing.JTable();
 
+        Repro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/reproductordesonido/iconos/3.JPG"))); // NOI18N
         Repro.setText("Reproducir");
         Repro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

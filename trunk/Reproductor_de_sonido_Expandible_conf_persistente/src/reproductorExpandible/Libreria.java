@@ -395,7 +395,6 @@ public class Libreria implements ReproductorLanzador{
     }
 
     public void ABRIR(String tipo, String ultima_direccion) {
-        ULTIMA_DIRECCION(ultima_direccion);
         JFileChooser archivo = new JFileChooser(ultima_direccion);
         archivo.setMultiSelectionEnabled(true);
         //archivo.setDragEnabled(true);
@@ -412,6 +411,7 @@ public class Libreria implements ReproductorLanzador{
             }
             else {
                 try {
+                    System.out.println("guardado " + archivo.getSelectedFile().getParent());
                     GUARDAR_ULTIMA_DIRECCION(archivo.getSelectedFile().getParent());
                     System.out.println(archivo.getSelectedFile());
                     tabla.objeto.LlenarTabla(archivo.getSelectedFiles());
@@ -429,6 +429,7 @@ public class Libreria implements ReproductorLanzador{
                 return;
             }
             try {
+                System.out.println("guardadoC " + archivo.getSelectedFile().getPath());
                 GUARDAR_ULTIMA_DIRECCION(archivo.getSelectedFile().getPath());
                 tabla.objeto.llamar(archivo.getSelectedFile());
             }
@@ -452,13 +453,28 @@ public class Libreria implements ReproductorLanzador{
         }
     }
 
-    public void CARGAR_CONFIGURACIONES(JSlider Volumen, String ultima_direccion, String ultima_lista, Boolean estado, JCheckBoxMenuItem Modo_Presentacion) {
-        ULTIMA_DIRECCION(ultima_direccion);
-        ULTIMA_LISTA(ultima_lista);
-        VOLUMEN(Volumen);
-        MUTE(estado);
-        MODO_PRESENTACION(Modo_Presentacion);
+    void CARGAR_CONFIGURACIONES() {
+        abc.ultima_direccion = ULTIMA_DIRECCION();
+        abc.ultima_lista = ULTIMA_LISTA();
+        VOLUMEN(abc.Volumen);
+        abc.estado1 = MUTE();
+        MODO_PRESENTACION(abc.Modo_Presentacion);
         EXTENCIONES();
+    }
+
+    private String ULTIMA_DIRECCION() {
+        String ultima_direccion = propiedades_conf.getProperty("ultima_direccion");
+        return ultima_direccion;
+    }
+
+    private String ULTIMA_LISTA() {
+        String ultima_lista = propiedades_conf.getProperty("ultima_lista");
+        return ultima_lista;
+    }
+
+    private boolean MUTE() {
+        boolean estado1 = Boolean.valueOf(propiedades_conf.getProperty("mute"));
+        return estado1;
     }
 
     public void EXTENCIONES() {
@@ -472,22 +488,10 @@ public class Libreria implements ReproductorLanzador{
         extencion_archivo = exten;
     }
 
-    private void ULTIMA_LISTA(String ultima_lista) {
-        ultima_lista = propiedades_conf.getProperty("ultima_lista");
-    }
-
-    public void ULTIMA_DIRECCION(String ultima_direccion) {
-        ultima_direccion = propiedades_conf.getProperty("ultima_direccion");
-    }
-
     public void VOLUMEN(JSlider Volumen) {
         int valor_volumen = 0;
         valor_volumen = Integer.parseInt(propiedades_conf.getProperty("volumen"));
         Volumen.setValue(valor_volumen);
-    }
-
-    private void MUTE(Boolean estado1) {
-        estado1 = Boolean.valueOf(propiedades_conf.getProperty("mute"));
     }
 
     private void MODO_PRESENTACION(JCheckBoxMenuItem Modo_Presentacion) {
@@ -499,7 +503,6 @@ public class Libreria implements ReproductorLanzador{
     }
 
     public void GUARDAR_VOLUMEN(int value) throws FileNotFoundException {
-        //System.out.println(String.valueOf(value));
         GUARDAR_LLAVE("volumen", String.valueOf(value), propiedades_conf, canonicalPath);
     }
 
